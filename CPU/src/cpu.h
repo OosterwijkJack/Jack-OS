@@ -3,6 +3,7 @@
 #include <unistd.h>
 #include <stdio.h>
 #include "instructions.h"
+#include "jacklib.h"
 
 #define REGISTER_COUNT 14
 #define INSTRUCTION_COUNT 25

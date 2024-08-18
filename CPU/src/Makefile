@@ -1,8 +1,8 @@
 CC=gcc
 
-CFLAGS = -Iinstructions -I.
+CFLAGS = -Iinstructions -Ijacklib -I. -g
 
-SRCS= cpu.c instructions/instructions.c
+SRCS= cpu.c instructions/instructions.c jacklib/jacklib.c
 
 EXEC=cpu
 
