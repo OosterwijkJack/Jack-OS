@@ -1,0 +1,69 @@
+REGISTERS:
+
+CPU Will have 10 general purpose registers
+PC register
+Stack top pointer register
+Stack base pointer register
+flag register (output of cmp instruction)
+
+flags:
+zero flag
+sign flag
+overflow flag (signed arithmetic)
+carry flag (unsigned arithmetic)
+(13 registers)
+
+LOGICAL & ARITHMETIC:
+CPU will be able to handle arithmetic and logical operations between any two general purpose registers
+add, sub, mul, div
+and, or, xor, not
+
+JMP INSTRUCTIONS:
+first user will run a cmp instruction comparing two values/registers
+
+cmpb (1 byte)
+cmpl (4 bytes)
+cmpq (8 bytes)
+ex:cmpb 1,2
+
+then jmp can be called with the location of the jump
+jeq <main+0x15>
+
+jeq (jump equals)
+jlt (Jump less then)
+jgt (Jump greater than)
+jne (Jump not equal)d
+jmp (jump no check)
+nul (no jump)
+
+DATA MANAGMENT:
+load (load data from memory into register)
+save (save data in register into memory)
+mov (move data between registers)
+lea (load address of memory into register)
+push (push data onto stack)
+pop (pop data from stack)
+
+OTHER INSTRUCTIONS:`
+interrupt instruction followed by the syscall code
+ex: int 3
+nothing instruction does nothing
+ex: nop
+
+
+OPCODES:
+
+Instructions are handled by first giving the type of instruction ex such ass add. this will take the first 5 bits of the opcode (0-4)
+and the next 5 bits is defining a register (5-9)
+then the next bit defines if the user is going to enter a literal number or wants to call the value of a register(10)
+then the next 16 bits is for register/value(11-26)
+(27-31) unused unless I add more
+
+If the instruction takes no input or only one the bit field will just be left 0
+
+
+There is total 25 instructions as of now leaving room for some expansion. (2^5=32)
+
+
+
+
