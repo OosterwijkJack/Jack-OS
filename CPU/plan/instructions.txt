@@ -5,6 +5,7 @@ PC register
 Stack top pointer register
 Stack base pointer register
 flag register (output of cmp instruction)
+2 registers for passing to functions
 
 flags:
 zero flag
@@ -53,10 +54,11 @@ ex: nop
 
 OPCODES:
 
-Instructions are handled by first giving the type of instruction ex such ass add. this will take the first 5 bits of the opcode (0-4)
-and the next 5 bits is defining a register (5-9)
-then the next bit defines if the user is going to enter a literal number or wants to call the value of a register(10)
-then the next 16 bits is for register/value(11-26)
+Instructions are handled by first giving the type of instruction ex such ass add. this will take the first 5 bits of the opcode
+then the next bit defines if the user is going to enter a literal number or wants to call the value of a register
+then the next 16 bits is for register/value
+and the next 5 bits is defining a register
+
 (27-31) unused unless I add more
 
 If the instruction takes no input or only one the bit field will just be left 0

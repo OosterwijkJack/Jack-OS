@@ -24,3 +24,11 @@ int power(int base, int p){ // calculates bast to the power of p
     }
     return total;
 }
+
+void *substring(char * str, char* dst, int from, int to){
+    int j = 0;
+    for(int i = from; i < to; i ++){
+        dst[j++] = str[i];
+    }
+    dst[j] = '\0';
+}
