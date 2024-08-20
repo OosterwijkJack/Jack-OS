@@ -2,8 +2,11 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <stdio.h>
+#include <signal.h>
 #include "instructions.h"
 #include "jacklib.h"
+
+typedef unsigned char byte;
 
 #define REGISTER_COUNT 16
 #define INSTRUCTION_COUNT 22
@@ -28,12 +31,18 @@ extern int regs[REGISTER_COUNT];
 #define RA1 14  // argument 1 reg
 #define RA2 15  // argument 2 reg
 
+#define FLAG_ISREG 0
+#define FLAG_ISLITERAL 1
+#define FLAG_CARRY 2
+
+
 
 // array of void pointers that contains methods to handle incoming instructions
 extern void(*Instructions[INSTRUCTION_COUNT])(void);
 
-void receive_instruction(char instruction[INSTRUCTION_SIZE]);
-int binarys_to_int(char * s, size_t size); // binary string to int
+void init();
+void receive_instruction(char opCode_s[INSTRUCTION_SIZE]);
+unsigned int binarys_to_int(char * s, size_t size); // binary string to int
 
 
 

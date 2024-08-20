@@ -1,7 +1,46 @@
 #include "instructions.h"
 
-void _add() {
+void _mov() {
+    write(STDOUT_FILENO, "mov\n", sizeof("mov\n") - 1);
+    if(regs[RFG] == FLAG_ISLITERAL)
+        regs[regs[RA2]] = regs[RA1];
+    else
+        regs[regs[RA2]] = regs[regs[RA1]];
+}
+
+void _add() { // full adder
     write(STDOUT_FILENO, "add\n", sizeof("add\n") - 1);
+
+    unsigned int num1;
+    unsigned int num2 = regs[regs[RA2]];
+    
+    int INT_S = sizeof(int) *8;
+    if(regs[RFG] == FLAG_ISLITERAL)
+        num1 = regs[RA1];
+    else
+        num1 = regs[regs[RA1]];
+
+    int carry = 0;
+    for(int i = 0 ; i < INT_S; i ++){ // loop for every bit in an intiger
+
+        if(carry){
+            num2 ^= (1 << i); // bitwise flip operation on bit mask at location
+            if(num2 << i == 0) // check if the flip flipped a 1 bit
+                carry = 1; // if it did enable carry
+            else
+                carry = 0; 
+        }
+        if(((num1 < i) & 0x1) & ((num2 < i) & 0x1)){ // if both bits are one 
+            carry = 1; // enable carry
+            num2 ^= (1 >> i); // flip
+        }
+        else if((((num1 < i) & 0x1) | ((num2 < i) & 0x1))){ // if one of the bits are 1
+            num2 |= (1 << i); // set bit to one
+        }
+    }
+    if(carry){
+        regs[RFG] = FLAG_CARRY;
+    }
 }
 
 void _sub() {
@@ -70,10 +109,6 @@ void _load() {
 
 void _save() {
     write(STDOUT_FILENO, "save\n", sizeof("save\n") - 1);
-}
-
-void _mov() {
-    write(STDOUT_FILENO, "mov\n", sizeof("mov\n") - 1);
 }
 
 void _lea() {

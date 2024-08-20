@@ -9,6 +9,7 @@ void(*Instructions[INSTRUCTION_COUNT])(void) = {
     _sub,
     _mul,
     _div,
+    _mov,
     _and,
     _or,
     _xor,
@@ -23,72 +24,96 @@ void(*Instructions[INSTRUCTION_COUNT])(void) = {
     _jmp,
     _load,
     _save,
-    _mov,
     _lea,
     _push,
     _pop
 };
 
-
-int main(void){
-    char opCode[INSTRUCTION_SIZE] = {'\0'};
-    scanf("%s", opCode);
-    receive_instruction(opCode);
-
+void display_registers(){
+    printf("\n");
+    for(int i = 0; i < REGISTER_COUNT; i++){
+        printf("%i: %i\n",i, regs[i]);
+    }
+    exit(0);
 }
 
-void receive_instruction(char instruction[INSTRUCTION_SIZE]){
-    // get instruction type/function
-    char instTypeBits[6];
-    substring(instruction,instTypeBits, 0,5); // note: substring is (inclusive, exclusive)
-    int instType = binarys_to_int(instTypeBits, strlength(instTypeBits));
+int main(int argc, char* argv[]){
+    signal(SIGINT, display_registers);
 
-    // check if it is valid
-    if(instType > INSTRUCTION_COUNT-1){
-        puts("Instruction out of range");
-        return;
+    if(argc > 1){
+        for(int i = 1; i < argc; i ++)
+            receive_instruction(argv[i]);
+        display_registers();
     }
-    printf("Instruction type: %i\n", instType);
-
-    // get bit that determines if user wants to use a literal number or a register
-    // literal numbers have 16 to work with registers the same (even though they would only 4) for simplicity
-    char isLiteralBit[2];
-    substring(instruction, isLiteralBit, 5,6);
-
-    char arg1Bits[17];
-    substring(instruction, arg1Bits,6,22);
-    int arg1 = binarys_to_int(arg1Bits, strlength(arg1Bits));
-
-    // if literal is selected 
-    if(isLiteralBit[0] == '1'){
-        regs[RA1] = arg1; // register arg1 contains the number
-    }
-    // if register is selected
     else{
-        if(arg1 < REGISTER_COUNT-1){
-            putsf("Invalid Register: %i", arg1);
-            return;
+        while(1){
+            char Opcode_s[INSTRUCTION_SIZE];
+            scanf("%s",Opcode_s );
+            receive_instruction(Opcode_s);
         }
-        regs[RA1] = regs[arg1]; // value of register is placed in arg1
-
+        
     }
 
-    // second argument is always a register (if there is a second argument)    
-    char arg2RegBits[6];
-    substring(instruction, arg2RegBits, 22,27);
-    int arg2 = binarys_to_int(arg2RegBits, strlength(arg2RegBits));
-
-    if(arg2 > REGISTER_COUNT-1){
-        putsf("Invalid Register: %i", arg2);
-        return;
-    }
-    regs[RA2] = regs[arg2];
-
-    // finally call instruction function 
-    Instructions[instType]();
 }
 
-int binarys_to_int(char * s, size_t size){
+void init(){
+    
+}
+
+void receive_instruction(char opCode_s[INSTRUCTION_SIZE]){
+
+    int len = strlength(opCode_s);
+
+    if(len != 32){
+        puts("Invalid instruction length must be 32 bits");
+        return;
+    }
+
+    // reset argument registers
+    regs[RA1] = 0;
+    regs[RA2] = 0;
+
+    unsigned int opCode = binarys_to_int(opCode_s, len);
+    // get instruction type/function
+    unsigned int instructionType = (opCode >> 27) & 0x3f; // 0x3f = 111111 (six 1 bits)
+    unsigned int isLiteral = (opCode>>26) & 0x1;// 1
+    unsigned int arg1 = (opCode>>10) & 0xffff; // 1111111111111111
+    unsigned int arg2 = (opCode >> 5) & 0x1f; // 11111
+
+    if((isLiteral != 0 && arg1 > REGISTER_COUNT) || arg2 > REGISTER_COUNT){
+        printf("Invalid register\n");
+        return;
+    }
+
+    if(instructionType > INSTRUCTION_COUNT){
+        printf("Invalid instruction\n");
+        return;
+    }
+    
+    if(arg1 != 0){
+        if(isLiteral != 0){
+            regs[RA1] = arg1;
+            regs[RFG] = FLAG_ISLITERAL; // set flag register so instruction knows wether to use value or register
+        }
+        else{
+            regs[RA1] = regs[arg1-1]; // instruction 0 = null so decrement by one (1 = R0) in context of instructions
+            regs[RFG] = FLAG_ISREG;
+        }
+    }
+
+    if(arg2 != 0){
+        printf("%i\n", arg2-1);
+        regs[RA2] = regs[arg2-1];
+    }
+        
+
+    printf("reg1: %i\n", regs[RA1]);
+    printf("reg2: %i\n", regs[RA2]);
+
+    Instructions[instructionType](); // execute instruction
+}
+
+unsigned int binarys_to_int(char * s, size_t size){
     int total = 0;
     int c = 0;
     for(int i = size-1; i >= 0; i--){ // loop from end of string backwards 
