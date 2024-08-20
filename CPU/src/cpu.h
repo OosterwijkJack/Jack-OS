@@ -42,7 +42,8 @@ extern void(*Instructions[INSTRUCTION_COUNT])(void);
 
 void init();
 void receive_instruction(char opCode_s[INSTRUCTION_SIZE]);
-unsigned int binarys_to_int(char * s, size_t size); // binary string to int
+int binarys_to_int(char * s, size_t size); // binary string to int
+int full_adder(int num1, int num2);
 
 
 

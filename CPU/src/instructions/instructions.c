@@ -11,48 +11,16 @@ void _mov() {
 void _add() { // full adder
     write(STDOUT_FILENO, "add\n", sizeof("add\n") - 1);
 
-    unsigned int num1;
-    unsigned int num2 = regs[regs[RA2]];
-    
-    int INT_S = sizeof(int) *8;
+    int num1;
+
     if(regs[RFG] == FLAG_ISLITERAL)
         num1 = regs[RA1];
     else
         num1 = regs[regs[RA1]];
 
-    int carry = 0;
-    for(int i = 0 ; i < INT_S; i ++){ // loop for every bit in an intiger
-
-        if(carry){
-            num2 ^= (1 << i); // bitwise flip operation on bit mask at location
-            if(num2 << i == 0) // check if the flip flipped a 1 bit
-                carry = 1; // if it did enable carry
-            else
-                carry = 0; 
-        }
-        if(((num1 < i) & 0x1) & ((num2 < i) & 0x1)){ // if both bits are one 
-            carry = 1; // enable carry
-            num2 ^= (1 >> i); // flip
-        }
-        else if((((num1 < i) & 0x1) | ((num2 < i) & 0x1))){ // if one of the bits are 1
-            num2 |= (1 << i); // set bit to one
-        }
-    }
-    if(carry){
-        regs[RFG] = FLAG_CARRY;
-    }
-}
-
-void _sub() {
-    write(STDOUT_FILENO, "sub\n", sizeof("sub\n") - 1);
-}
-
-void _mul() {
-    write(STDOUT_FILENO, "mul\n", sizeof("mul\n") - 1);
-}
-
-void _div() {
-    write(STDOUT_FILENO, "div\n", sizeof("div\n") - 1);
+    int num2 = regs[regs[RA2]];
+    
+    regs[regs[RA2]] = full_adder(num1, num2);
 }
 
 void _and() {
