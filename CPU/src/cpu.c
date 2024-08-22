@@ -16,7 +16,6 @@ void(*Instructions[INSTRUCTION_COUNT])(void) = {
     _not,
     _compb,
     _compl,
-    _compq,
     _jeq,
     _jlt,
     _jgt,
@@ -54,10 +53,6 @@ int main(int argc, char* argv[]){
         
     }
 
-}
-
-void init(){
-    
 }
 
 void receive_instruction(char opCode_s[INSTRUCTION_SIZE]){
@@ -124,31 +119,34 @@ int binarys_to_int(char * s, size_t size){
     return total;
 }
 
-int full_adder(int num1, int num2){
-    int INT_S = sizeof(int) *8;
+/*
+Unused because would hurt performace. I wanted to create the cpu with as many bitwise operations as possible
+to try and keep the simulator feeling very authentic
 
+int full_adder(void * num1, void *num2){
+
+    int *n1 = (int * )num1;
+    int *n2 = (int * )num2;
     int carry = 0;
     for(int i = 0 ; i < INT_S; i ++){ // loop for every bit in an intiger
+        int bit1 = (*n1 >> i) & 0x1;
+        int bit2 = (*n2 >> i) & 0x1;
 
-        if(carry){
-            num2 ^= (1 << i); // bitwise flip operation on bit mask at location
-            if(((num2 >> i) & 0x1) == 0) // check if the flip flipped a 1 bit
-                carry = 1; // if it did enable carry
-            else
-                carry = 0; 
-        }
-        if(((num1 >> i) & 0x1) & ((num2 >> i) & 0x1)){ // if both bits are one 
-            carry = 1; // enable carry
-            num2 ^= (1 << i); // flip
-        }
-        else if((((num1 >> i) & 0x1) | ((num2 >> i) & 0x1))){ // if one of the bits are 1
-            num2 |= (1 << i); // set bit to one
-        }
+        // Calculate the sum for this bit
+        int sum = bit1 ^ bit2 ^ carry;
+
+        // Update the result in num2
+        if (sum)
+            *n2 |= (1 << i);  // Set the bit to 1
+        else
+            *n2 &= ~(1 << i);  // Set the bit to 0
+
+        // Update the carry
+        carry = (bit1 & bit2) | (carry & (bit1 ^ bit2));
     }
-    
     if(carry){
         regs[RFG] = FLAG_CARRY;
     }   
 }
-
+*/
 

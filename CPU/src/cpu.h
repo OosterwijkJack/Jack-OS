@@ -6,10 +6,11 @@
 #include "instructions.h"
 #include "jacklib.h"
 
-typedef unsigned char byte;
+typedef char byte;
 
+#define INT_S 32
 #define REGISTER_COUNT 16
-#define INSTRUCTION_COUNT 22
+#define INSTRUCTION_COUNT 19
 #define INSTRUCTION_SIZE 33 // + 1 for newline
 
 extern int regs[REGISTER_COUNT];
@@ -31,19 +32,20 @@ extern int regs[REGISTER_COUNT];
 #define RA1 14  // argument 1 reg
 #define RA2 15  // argument 2 reg
 
-#define FLAG_ISREG 0
-#define FLAG_ISLITERAL 1
+#define FLAG_ISREG 0 // is register
+#define FLAG_ISLITERAL 1 
 #define FLAG_CARRY 2
-
+#define FLAG_POS 3
+#define FLAG_NEG 4
+#define FLAG_ZRO 5 // zero
 
 
 // array of void pointers that contains methods to handle incoming instructions
 extern void(*Instructions[INSTRUCTION_COUNT])(void);
 
-void init();
 void receive_instruction(char opCode_s[INSTRUCTION_SIZE]);
 int binarys_to_int(char * s, size_t size); // binary string to int
-int full_adder(int num1, int num2);
+int full_adder(void * num1, void *num2);
 
 
 
