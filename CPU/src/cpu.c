@@ -75,7 +75,7 @@ void receive_instruction(char opCode_s[INSTRUCTION_SIZE]){
     unsigned int arg1 = (opCode>>10) & 0xffff; // 1111111111111111
     unsigned int arg2 = (opCode >> 5) & 0x1f; // 11111
 
-    if((isLiteral != 0 && arg1 > REGISTER_COUNT) || arg2 > REGISTER_COUNT){
+    if((isLiteral == 0 && arg1 > REGISTER_COUNT) || arg2 > REGISTER_COUNT){
         printf("Invalid register\n");
         return;
     }

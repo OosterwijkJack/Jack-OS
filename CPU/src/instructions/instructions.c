@@ -11,14 +11,6 @@ int get_reg1(){ // get eithher value of register based on arg1 or arg1
     return num1;
 }
 
-int make_neg(int *num){
-    for(int i = 0 ; i < INT_S; i++){ // flip all bits and add 1
-        *num ^= (1 << i);
-    }
-    int a = 1;
-    full_adder(&a, num);
-}
-
 int get_comp_flag(int out){
 
     if(out == 0)
