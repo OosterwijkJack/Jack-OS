@@ -3,8 +3,8 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <signal.h>
+#include <string.h>
 #include "instructions.h"
-#include "jacklib.h"
 
 typedef char byte;
 

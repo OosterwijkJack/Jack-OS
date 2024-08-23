@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 # In the future the assembler will be written in my assembly language then transformed 
 # into machine language that runs on my simulated cpu via this program. Then it will 
 # be able to run in my operating system’s environment 
@@ -46,12 +48,11 @@ reg_names = {
     "RA2": 16
 }
 
-
-
 def main ():
 
-    if(len(sys.argv) != 3):
+    if(len(sys.argv) < 3 or len(sys.argv) > 3):
         print("Usage: python3 assembler.py {file} {out}")
+        exit(1)
 
     assembled = ''
     
@@ -65,11 +66,16 @@ def assemble_no_labels():
     bits = []
 
     for i in f.readlines():
+
+        if(len(i) <= 6):
+            continue
+
         curstr = ""
 
         space = i.find(" ")
 
         instruction = i[0:space]
+
         curstr += str(bin(func_table[instruction]))[2:].zfill(5) # convert instruction to binary of 5 bits
 
         comma = i.find(",")

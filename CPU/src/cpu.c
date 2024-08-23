@@ -39,25 +39,28 @@ void display_registers(){
 int main(int argc, char* argv[]){
     signal(SIGINT, display_registers);
 
-    if(argc > 1){
-        for(int i = 1; i < argc; i ++)
-            receive_instruction(argv[i]);
-        display_registers();
-    }
-    else{
-        while(1){
-            char Opcode_s[INSTRUCTION_SIZE];
-            scanf("%s",Opcode_s );
-            receive_instruction(Opcode_s);
-        }
-        
+    if(argc != 2){
+        printf("Usage: ./cpu {file}");
     }
 
+    FILE * fptr = fopen(argv[1], "r");
+
+    if(fptr == NULL){
+        printf("Invalid file\n");
+        exit(EXIT_FAILURE);
+    }
+
+    char buf[INT_S+2];
+    while(fgets(buf, sizeof(buf), fptr)){
+        buf[strcspn(buf, "\n")] = '\0';
+        receive_instruction(buf);
+    }
+    display_registers();
 }
 
 void receive_instruction(char opCode_s[INSTRUCTION_SIZE]){
 
-    int len = strlength(opCode_s);
+    int len = strlen(opCode_s);
 
     if(len != 32){
         puts("Invalid instruction length must be 32 bits");
@@ -96,25 +99,29 @@ void receive_instruction(char opCode_s[INSTRUCTION_SIZE]){
         }
     }
 
+    if (arg2-1 > REGISTER_COUNT){
+        printf("Invalid register by arg 2\n");
+        return;
+    }
+
     if(arg2 != 0){
         printf("%i\n", arg2-1);
-        regs[RA2] = regs[arg2-1];
+        regs[RA2] = arg2-1;
     }
         
 
-    printf("reg1: %i\n", regs[RA1]);
-    printf("reg2: %i\n", regs[RA2]);
+    //printf("reg1: %i\n", regs[RA1]);
+    //printf("reg2: %i\n", regs[RA2]);
 
     Instructions[instructionType](); // execute instruction
+    regs[RPC] += 1; // increment program counter
 }
 
 int binarys_to_int(char * s, size_t size){
     int total = 0;
-    int c = 0;
-    for(int i = size-1; i >= 0; i--){ // loop from end of string backwards 
-        if(s[i] == '1') 
-            total += power(2, c);
-        c+=1;
+    for(int i = 0; i < size; i ++){ // loop from end of string backwards 
+        if(s[size - 1 -i] == '1')
+            total += (1 << i);
     }
     return total;
 }
