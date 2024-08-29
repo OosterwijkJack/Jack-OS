@@ -7,7 +7,7 @@ faster
 
 cons:
 not expandable
-and re arranging memory takes a long time (but does not happen often)
+re arranging memory takes a long time (but does not happen often)
 
 
 or go for the multi level page table approach:
@@ -18,7 +18,7 @@ educationally beneficial
 
 cons:
 complex
-slower
+slower address translation
 
 Plan:
 I will first implement segmentation with some sort of system that will decide when to rearrange memory.
