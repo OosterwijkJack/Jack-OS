@@ -1,3 +1,5 @@
 mov 9,R3
-sub 2,R3
-mul 3,R3
+compl 9,R3
+JEQ 5
+add 5,R3
+add 5,R3

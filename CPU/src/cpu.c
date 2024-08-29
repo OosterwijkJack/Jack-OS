@@ -2,6 +2,7 @@
 
 // initializ registers to zero
 int regs[REGISTER_COUNT] = {0};
+int program_memory[(int)PGM_SIZE/4] = {0};
 
 // instructions can easily be indexed based on opcode
 void(*Instructions[INSTRUCTION_COUNT])(void) = {
@@ -39,8 +40,18 @@ void display_registers(){
 int main(int argc, char* argv[]){
     signal(SIGINT, display_registers);
 
+    load_program(argc, argv);
+    execute_program();
+    
+    display_registers();
+}
+
+void load_program(int argc, char* argv[]){
+    char buf[INT_S+2];
+
     if(argc != 2){
-        printf("Usage: ./cpu {file}");
+        printf("Usage: ./cpu {file}\n");
+        exit(EXIT_FAILURE);
     }
 
     FILE * fptr = fopen(argv[1], "r");
@@ -50,76 +61,76 @@ int main(int argc, char* argv[]){
         exit(EXIT_FAILURE);
     }
 
-    char buf[INT_S+2];
+    int count = 0;
     while(fgets(buf, sizeof(buf), fptr)){
         buf[strcspn(buf, "\n")] = '\0';
-        receive_instruction(buf);
+
+        if(strlen(buf) != 32){
+            printf("Invalid instruction length at line %i. Cant load program.", count);
+        }
+
+        program_memory[count++] = binarys_to_int(buf, INT_S);
     }
-    display_registers();
 }
 
-void receive_instruction(char opCode_s[INSTRUCTION_SIZE]){
+void execute_program(){
+    while(program_memory[regs[RPC]] != 0){ // run until no more instructions to run
 
-    int len = strlen(opCode_s);
-
-    if(len != 32){
-        puts("Invalid instruction length must be 32 bits");
-        return;
-    }
-
-    // reset argument registers
-    regs[RA1] = 0;
-    regs[RA2] = 0;
-
-    unsigned int opCode = binarys_to_int(opCode_s, len);
-    // get instruction type/function
-    unsigned int instructionType = (opCode >> 27) & 0x3f; // 0x3f = 111111 (six 1 bits)
-    unsigned int isLiteral = (opCode>>26) & 0x1;// 1
-    unsigned int arg1 = (opCode>>10) & 0xffff; // 1111111111111111
-    unsigned int arg2 = (opCode >> 5) & 0x1f; // 11111
-
-    if((isLiteral == 0 && arg1 > REGISTER_COUNT) || arg2 > REGISTER_COUNT){
-        printf("Invalid register\n");
-        return;
-    }
-
-    if(instructionType > INSTRUCTION_COUNT){
-        printf("Invalid instruction\n");
-        return;
-    }
     
-    if(arg1 != 0){
-        if(isLiteral != 0){
-            regs[RA1] = arg1;
-            regs[RFG] = FLAG_ISLITERAL; // set flag register so instruction knows wether to use value or register
-        }
-        else{
-            regs[RA1] = regs[arg1-1]; // instruction 0 = null so decrement by one (1 = R0) in context of instructions
-            regs[RFG] = FLAG_ISREG;
-        }
-    }
+        // reset argument registers
+        regs[RA1] = 0;
+        regs[RA2] = 0;
 
-    if (arg2-1 > REGISTER_COUNT){
-        printf("Invalid register by arg 2\n");
-        return;
-    }
+        unsigned int opCode = program_memory[regs[RPC]]; // instruction at PC
+        // get instruction type/function
+        unsigned int instructionType = (opCode >> 27) & 0x3f; // 0x3f = 111111 (six 1 bits)
+        unsigned int isLiteral = (opCode>>26) & 0x1;// 1
+        unsigned int arg1 = (opCode>>10) & 0xffff; // 1111111111111111
+        unsigned int arg2 = (opCode >> 5) & 0x1f; // 11111
 
-    if(arg2 != 0){
-        printf("%i\n", arg2-1);
-        regs[RA2] = arg2-1;
-    }
+        if((isLiteral == 0 && arg1 > REGISTER_COUNT) || arg2 > REGISTER_COUNT){
+            printf("Invalid register\n");
+            return;
+        }
+
+        if(instructionType > INSTRUCTION_COUNT){
+            printf("Invalid instruction\n");
+            return;
+        }
         
+        if(arg1 != 0){
+            if(isLiteral != 0){
+                regs[RA1] = arg1;
+                regs[RFG] = FLAG_ISLITERAL; // set flag register so instruction knows wether to use value or register
+            }
+            else{
+                regs[RA1] = regs[arg1-1]; // instruction 0 = null so decrement by one (1 = R0) in context of instructions
+                regs[RFG] = FLAG_ISREG;
+            }
+        }
 
-    //printf("reg1: %i\n", regs[RA1]);
-    //printf("reg2: %i\n", regs[RA2]);
+        if (arg2 > REGISTER_COUNT+1){
+            printf("Invalid register by arg 2\n");
+            return;
+        }
 
-    Instructions[instructionType](); // execute instruction
-    regs[RPC] += 1; // increment program counter
+        if(arg2 != 0){
+            printf("%i\n", arg2-1);
+            regs[RA2] = arg2-1;
+        }
+            
+
+        //printf("reg1: %i\n", regs[RA1]);
+        //printf("reg2: %i\n", regs[RA2]);
+
+        regs[RPC] += 1; // increment program counter
+        Instructions[instructionType](); // execute instruction
+    }
 }
 
 int binarys_to_int(char * s, size_t size){
     int total = 0;
-    for(int i = 0; i < size; i ++){ // loop from end of string backwards 
+    for(int i = 0; i < size; i ++){ 
         if(s[size - 1 -i] == '1')
             total += (1 << i);
     }

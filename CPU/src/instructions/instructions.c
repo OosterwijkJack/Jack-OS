@@ -101,7 +101,7 @@ void _compb() {
     byte num2 = (byte)regs[regs[RA2]];
 
     // subtracts num2 from num1
-    regs[RFG] = get_comp_flag(num1-num2);
+    regs[RCF] = get_comp_flag(num1-num2);
 
 }
 
@@ -111,42 +111,42 @@ void _compl() {
     int num2 = (int)regs[regs[RA2]];
 
     // subtracts num2 from num1
-    regs[RFG] = get_comp_flag(num1-num2);
+    regs[RCF] = get_comp_flag(num1-num2);
 }
 
 void _jeq() {
     write(STDOUT_FILENO, "jeq\n", sizeof("jeq\n") - 1);
 
-    if(regs[RFG] == FLAG_ZRO)
-        regs[RPC] = regs[RA1];
+    if(regs[RCF] == FLAG_ZRO)
+        regs[RPC] = regs[RA1]-1;
 
 }
 
 void _jlt() {
     write(STDOUT_FILENO, "jlt\n", sizeof("jlt\n") - 1);
 
-    if(regs[RFG] == FLAG_NEG) // num2 - num1 will be negative if num2 is less than 
-        regs[RPC] = regs[RA1];
+    if(regs[RCF] == FLAG_NEG) // num2 - num1 will be negative if num2 is less than 
+        regs[RPC] = regs[RA1]-1;
     
 }
 
 void _jgt() {
     write(STDOUT_FILENO, "jgt\n", sizeof("jgt\n") - 1);
 
-    if(regs[RFG] == FLAG_POS)
-        regs[RPC] = regs[RA1];
+    if(regs[RCF] == FLAG_POS)
+        regs[RPC] = regs[RA1]-1;
 }
 
 void _jne() {
     write(STDOUT_FILENO, "jne\n", sizeof("jne\n") - 1);
 
-    if(regs[RFG] != FLAG_NEG)
-        regs[RPC] = regs[RA1];
+    if(regs[RCF] != FLAG_NEG)
+        regs[RPC] = regs[RA1]-1;
 }
 
 void _jmp() {
     write(STDOUT_FILENO, "jmp\n", sizeof("jmp\n") - 1);
-    regs[RPC] = regs[RA1];
+    regs[RPC] = regs[RA1]-1;
 }
 
 // cant write until i implement memory and stack
