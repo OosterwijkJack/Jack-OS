@@ -1,10 +1,11 @@
 REGISTERS:
 
-CPU Will have 10 general purpose registers
+CPU has 17 general purpose registers
 PC register
 Stack top pointer register
 Stack base pointer register
-flag register (output of cmp instruction)
+reg/literal flag register (output of cmp instruction)
+cmp flag register
 2 registers for passing to functions
 
 flags:
@@ -12,7 +13,6 @@ zero flag
 sign flag
 overflow flag (signed arithmetic)
 carry flag (unsigned arithmetic)
-(13 registers)
 
 LOGICAL & ARITHMETIC:
 CPU will be able to handle arithmetic and logical operations between any two general purpose registers

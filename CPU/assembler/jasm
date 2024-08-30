@@ -3,8 +3,11 @@
 # In the future the assembler will be written in my assembly language then transformed 
 # into machine language that runs on my simulated cpu via this program. Then it will 
 # be able to run in my operating system’s environment 
+# cp jasm /home/jack/.local/bin
 
 import sys
+
+ARG1_SIZE = 2**21
 
 func_table = {
     "add": 0,
@@ -43,7 +46,7 @@ reg_names = {
     "RPC": 11,
     "RSP": 12,
     "RSB": 13,
-    "RCF", 14,
+    "RCF": 14,
     "RFG": 15,
     "RA1": 16,
     "RA2": 17
@@ -66,7 +69,7 @@ def assemble_no_labels():
     f = open(sys.argv[1], 'r')
     bits = []
 
-    for i in f.readlines():
+    for a,i in enumerate(f.readlines()):
 
         if(len(i) <= 1):
             continue
@@ -85,17 +88,19 @@ def assemble_no_labels():
         
         if(arg1 in reg_names.keys()):
             curstr += '0'
-            curstr += str(bin(reg_names[arg1])[2:].zfill(16))
+            curstr += str(bin(reg_names[arg1])[2:].zfill(21))
         else:
+            if(int(arg1) > ARG1_SIZE):
+                print(f"Arg1 number exceeds limit of {ARG1_SIZE} on line {a+1}")
+                exit(1)
             curstr += '1'
-            curstr += str(bin(int(arg1)))[2:].zfill(16)
+            curstr += str(bin(int(arg1)))[2:].zfill(21)
         
         if(comma != -1):
             arg2 = i[comma+1: len(i.rstrip())]
             curstr += str(bin(reg_names[arg2]))[2:].zfill(5)
-            curstr += "0"*5
         else:
-            curstr += "0"*10
+            curstr += "0"*5
 
         bits.append(curstr)
     f.close()

@@ -67,6 +67,7 @@ void load_program(int argc, char* argv[]){
 
         if(strlen(buf) != 32){
             printf("Invalid instruction length at line %i. Cant load program.", count);
+            exit(1);
         }
 
         program_memory[count++] = binarys_to_int(buf, INT_S);
@@ -85,8 +86,8 @@ void execute_program(){
         // get instruction type/function
         unsigned int instructionType = (opCode >> 27) & 0x3f; // 0x3f = 111111 (six 1 bits)
         unsigned int isLiteral = (opCode>>26) & 0x1;// 1
-        unsigned int arg1 = (opCode>>10) & 0xffff; // 1111111111111111
-        unsigned int arg2 = (opCode >> 5) & 0x1f; // 11111
+        unsigned int arg1 = (opCode>>5) & 0x1fffff; // 1111111111111111
+        unsigned int arg2 = (opCode) & 0x1f; // 11111
 
         if((isLiteral == 0 && arg1 > REGISTER_COUNT) || arg2 > REGISTER_COUNT){
             printf("Invalid register\n");
@@ -115,7 +116,6 @@ void execute_program(){
         }
 
         if(arg2 != 0){
-            printf("%i\n", arg2-1);
             regs[RA2] = arg2-1;
         }
             

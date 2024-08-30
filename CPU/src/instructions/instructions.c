@@ -23,7 +23,6 @@ int get_comp_flag(int out){
 }
 
 void _mov() {
-    write(STDOUT_FILENO, "mov\n", sizeof("mov\n") - 1);
     if(regs[RFG] == FLAG_ISLITERAL)
         regs[regs[RA2]] = regs[RA1];
     else
@@ -31,7 +30,6 @@ void _mov() {
 }
 
 void _add() { // full adder
-    write(STDOUT_FILENO, "add\n", sizeof("add\n") - 1);
 
     int num1 = get_reg1();
     int num2 = (regs[regs[RA2]]);
@@ -40,7 +38,6 @@ void _add() { // full adder
 }
 
 void _mul(){
-    write(STDOUT_FILENO, "mul\n", sizeof("add\n") - 1);
 
     int num1 = get_reg1();
     int num2 = regs[regs[RA2]];
@@ -49,7 +46,6 @@ void _mul(){
     
 }
 void _sub(){
-    write(STDOUT_FILENO, "sub\n", sizeof("add\n") - 1);
 
     int num1 = get_reg1();
     int num2 = regs[regs[RA2]];
@@ -57,11 +53,13 @@ void _sub(){
     regs[regs[RA2]] -= num1;
 }
 void _div(){
+    int num1 = get_reg1();
+    int num2 = regs[regs[RA2]];
 
+    regs[regs[RA2]] /= num1;
 }
 
 void _and() {
-    write(STDOUT_FILENO, "and\n", sizeof("and\n") - 1);
     
     int num1 = get_reg1();
     int num2 = regs[regs[RA2]];
@@ -70,7 +68,6 @@ void _and() {
 }
 
 void _or() {
-    write(STDOUT_FILENO, "or\n", sizeof("or\n") - 1);
 
     int num1 = get_reg1();
     int num2 = regs[regs[RA2]];
@@ -79,7 +76,6 @@ void _or() {
 }
 
 void _xor() {
-    write(STDOUT_FILENO, "xor\n", sizeof("xor\n") - 1);
 
     int num1 = get_reg1();
     int num2 = regs[regs[RA2]];
@@ -88,14 +84,12 @@ void _xor() {
 }
 
 void _not() {
-    write(STDOUT_FILENO, "not\n", sizeof("not\n") - 1);
 
     int num1 = regs[RA1];
     regs[RA1] = ~num1;
 }
 
 void _compb() {
-    write(STDOUT_FILENO, "compb\n", sizeof("compb\n") - 1);
 
     byte num1 = (byte)get_reg1();
     byte num2 = (byte)regs[regs[RA2]];
@@ -106,7 +100,6 @@ void _compb() {
 }
 
 void _compl() {
-    write(STDOUT_FILENO, "compl\n", sizeof("compl\n") - 1);
     int num1 = (int)get_reg1();
     int num2 = (int)regs[regs[RA2]];
 
@@ -115,7 +108,6 @@ void _compl() {
 }
 
 void _jeq() {
-    write(STDOUT_FILENO, "jeq\n", sizeof("jeq\n") - 1);
 
     if(regs[RCF] == FLAG_ZRO)
         regs[RPC] = regs[RA1]-1;
@@ -123,7 +115,6 @@ void _jeq() {
 }
 
 void _jlt() {
-    write(STDOUT_FILENO, "jlt\n", sizeof("jlt\n") - 1);
 
     if(regs[RCF] == FLAG_NEG) // num2 - num1 will be negative if num2 is less than 
         regs[RPC] = regs[RA1]-1;
@@ -131,21 +122,18 @@ void _jlt() {
 }
 
 void _jgt() {
-    write(STDOUT_FILENO, "jgt\n", sizeof("jgt\n") - 1);
 
     if(regs[RCF] == FLAG_POS)
         regs[RPC] = regs[RA1]-1;
 }
 
 void _jne() {
-    write(STDOUT_FILENO, "jne\n", sizeof("jne\n") - 1);
 
-    if(regs[RCF] != FLAG_NEG)
+    if(regs[RCF] != FLAG_ZRO)
         regs[RPC] = regs[RA1]-1;
 }
 
 void _jmp() {
-    write(STDOUT_FILENO, "jmp\n", sizeof("jmp\n") - 1);
     regs[RPC] = regs[RA1]-1;
 }
 
