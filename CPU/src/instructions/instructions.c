@@ -89,17 +89,7 @@ void _not() {
     regs[RA1] = ~num1;
 }
 
-void _compb() {
-
-    byte num1 = (byte)get_reg1();
-    byte num2 = (byte)regs[regs[RA2]];
-
-    // subtracts num2 from num1
-    regs[RCF] = get_comp_flag(num1-num2);
-
-}
-
-void _compl() {
+void _cmp() {
     int num1 = (int)get_reg1();
     int num2 = (int)regs[regs[RA2]];
 
@@ -110,31 +100,31 @@ void _compl() {
 void _jeq() {
 
     if(regs[RCF] == FLAG_ZRO)
-        regs[RPC] = regs[RA1]-1;
+        regs[RPC] = (regs[RA1]-1)*sizeof(int);
 
 }
 
 void _jlt() {
 
     if(regs[RCF] == FLAG_NEG) // num2 - num1 will be negative if num2 is less than 
-        regs[RPC] = regs[RA1]-1;
+        regs[RPC] = (regs[RA1]-1) * sizeof(int);
     
 }
 
 void _jgt() {
 
     if(regs[RCF] == FLAG_POS)
-        regs[RPC] = regs[RA1]-1;
+        regs[RPC] = (regs[RA1]-1)*sizeof(int);
 }
 
 void _jne() {
 
     if(regs[RCF] != FLAG_ZRO)
-        regs[RPC] = regs[RA1]-1;
+        regs[RPC] = (regs[RA1]-1)*sizeof(int);
 }
 
 void _jmp() {
-    regs[RPC] = regs[RA1]-1;
+    regs[RPC] = (regs[RA1]-1)*sizeof(int);
 }
 
 // cant write until i implement memory and stack

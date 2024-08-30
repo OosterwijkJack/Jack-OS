@@ -2,7 +2,7 @@
 
 // initializ registers to zero
 int regs[REGISTER_COUNT] = {0};
-int program_memory[(int)PGM_SIZE/4] = {0};
+char program_memory[PGM_SIZE] = {0};
 
 // instructions can easily be indexed based on opcode
 void(*Instructions[INSTRUCTION_COUNT])(void) = {
@@ -15,8 +15,7 @@ void(*Instructions[INSTRUCTION_COUNT])(void) = {
     _or,
     _xor,
     _not,
-    _compb,
-    _compl,
+    _cmp,
     _jeq,
     _jlt,
     _jgt,
@@ -70,7 +69,11 @@ void load_program(int argc, char* argv[]){
             exit(1);
         }
 
-        program_memory[count++] = binarys_to_int(buf, INT_S);
+        int instruction = binarys_to_int(buf, INT_S);
+        // load int into memory in 4 seperate bytes
+        for(int i = 0 ; i < 4; i++){
+            program_memory[count++] = (int)(instruction >> (8 * i)) & 0xff;
+        }
     }
 }
 
@@ -82,7 +85,18 @@ void execute_program(){
         regs[RA1] = 0;
         regs[RA2] = 0;
 
-        unsigned int opCode = program_memory[regs[RPC]]; // instruction at PC
+        unsigned int opCode = 0; // instruction at PC
+        for(int i = 0 ; i < sizeof(int); i ++){ // put int back together
+            opCode |=  ((unsigned char)program_memory[regs[RPC]+i] << (i*8));
+        }
+
+        /*
+        for(int i = 0 ; i < 32; i ++){
+            printf("%i", (opCode >> i)&0x1);
+        }
+        printf("\n");
+        */
+
         // get instruction type/function
         unsigned int instructionType = (opCode >> 27) & 0x3f; // 0x3f = 111111 (six 1 bits)
         unsigned int isLiteral = (opCode>>26) & 0x1;// 1
@@ -123,7 +137,7 @@ void execute_program(){
         //printf("reg1: %i\n", regs[RA1]);
         //printf("reg2: %i\n", regs[RA2]);
 
-        regs[RPC] += 1; // increment program counter
+        regs[RPC] += 4; // increment program counter
         Instructions[instructionType](); // execute instruction
     }
 }

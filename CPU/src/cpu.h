@@ -10,7 +10,7 @@ typedef char byte;
 
 #define INT_S 32
 #define REGISTER_COUNT 17
-#define INSTRUCTION_COUNT 21
+#define INSTRUCTION_COUNT 20
 #define INSTRUCTION_SIZE 33 // + 1 for newline
 #define PGM_SIZE 1024
 

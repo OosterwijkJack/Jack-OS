@@ -3,7 +3,7 @@
 # In the future the assembler will be written in my assembly language then transformed 
 # into machine language that runs on my simulated cpu via this program. Then it will 
 # be able to run in my operating system’s environment 
-# cp jasm /home/jack/.local/bin
+# cp '/home/jack/Desktop/Operating Systems/Jack-OS/CPU/assembler/jasm' /home/jack/.local/bin
 
 import sys
 
@@ -19,18 +19,19 @@ func_table = {
     "or": 6,
     "xor": 7,
     "not": 8,
-    "compb": 9,
-    "compl": 10,
-    "jeq": 11,
-    "jlt": 12,
-    "jgt": 13,
-    "jne": 14,
-    "jmp": 15,
-    "load": 16,
-    "save": 17,
-    "lea": 18,
-    "push": 19,
-    "pop": 20}
+    "cmp": 9,
+    "jeq": 10,
+    "jlt": 11,
+    "jgt": 12,
+    "jne": 13,
+    "jmp": 14,
+    "load": 15,
+    "save": 16,
+    "lea": 17,
+    "push": 18,
+    "pop": 19
+}
+
 
 reg_names = {
     "R0": 1,
@@ -57,8 +58,6 @@ def main ():
     if(len(sys.argv) < 3 or len(sys.argv) > 3):
         print("Usage: python3 assembler.py {file} {out}")
         exit(1)
-
-    assembled = ''
     
     #convert_labels(sys.argv[1]) # converts labels to numbers
     assemble_no_labels() # assembles
@@ -80,7 +79,14 @@ def assemble_no_labels():
 
         instruction = i[0:space]
 
-        curstr += str(bin(func_table[instruction]))[2:].zfill(5) # convert instruction to binary of 5 bits
+        try:
+            curstr += str(bin(func_table[instruction]))[2:].zfill(5) # convert instruction to binary of 5 bits
+        except KeyError:
+            print(f"Invalid instruction '{instruction}' on line {a}")
+            exit(1)
+        except Exception as e:
+            print(e)
+            exit(1)
 
         comma = i.find(",")
 
