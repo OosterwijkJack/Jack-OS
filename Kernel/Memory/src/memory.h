@@ -42,7 +42,7 @@ void reallocate_memory_space();
 // translate virtual address to physical address
 int translate_address(int pid, int vaddress);
 
-void free_list_append(int size, int base);
-void free_list_delete(free_list_t * node);
+int free_list_prepend(int base, int size);
+int free_list_delete(free_list_t * node, bool *merge);
 
 void print_memory();

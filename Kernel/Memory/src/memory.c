@@ -9,21 +9,22 @@ note: base is inclusive bound is exclusive
 
 prgm *program_list = NULL;
 unsigned char ram[RAM_SIZE] = {0};
-free_list_t *free_list_head = NULL;
-free_list_t *free_list_tail = NULL;
+free_list_t *free_list = NULL;
+
 
 int cur_pid = 1;
 
 int main(void){
     init_memory();
-    
-    int p1 = allocate_program(100);
-    int p2 = allocate_program(100);
-    int p3 = allocate_program(100);
+
+    int p1 = allocate_program(1000);
+    int p2 = allocate_program(1500);
+    int p3 = allocate_program(120);
 
     deallocate_program(p3);
     deallocate_program(p2);
     deallocate_program(p1);
+    //deallocate_program(p3);
 
     print_memory();
 }
@@ -40,8 +41,8 @@ void init_memory(){
 
     new->base = 0;
     new->size = RAM_SIZE;
-    new->next = free_list;
-    new->prev = free_list;
+    new->next = NULL;
+    new->prev = NULL;
     free_list = new;
 
 
@@ -84,22 +85,7 @@ int allocate_program(int size){
     int free_block_size = best->size;
 
     // remove block from free list
-    if (best == free_list){
-        free_list_t *tmp = free_list;
-        free_list = free_list->next;
-        free(tmp);
-    }
-    else{
-
-        for(free_list_t *ptr = free_list; ptr != NULL; ptr=ptr->next){
-
-            if(ptr->next == best){
-                ptr->next = ptr->next->next;
-                free(best);
-                break;
-            }
-        }
-    }
+    free_list_delete(best, NULL);
 
     // add new smaller block to free list
     if(new_program->size != free_block_size){ // avoid creating free block of size 0
@@ -130,17 +116,7 @@ int deallocate_program(int pid){
 
     
     // add back into free space list
-    free_list_t *new_free = malloc(sizeof(free_list_t));
-
-    if(new_free == NULL){
-        printf("Deallocate free space malloc failed\n");
-        exit(EXIT_FAILURE);
-    }
-
-    new_free->base = program->base;
-    new_free->size = program->size;
-    new_free->next = free_list;
-    free_list = new_free;    
+    free_list_prepend(program->base, program->size);
 
     // [free node]
     if(program == program_list){
@@ -177,36 +153,96 @@ void merge_free_nodes(){
         free(tmp);
 
     }   
-    for(free_list_t *ptr = free_list; ptr->next != NULL; ptr=ptr->next){
+
+    for(free_list_t *ptr = free_list; ptr->next != NULL;){
+        bool merge = false;
+        // check below for merge blocks
+
         // if base == bound
         if(ptr->base + ptr->size == (ptr->next->base)){
             free_list_t *tmp = ptr->next;
-            ptr->next = ptr->next->next;
-
-            ptr->next->next->size += tmp->size;
-            ptr->next->next->base = tmp->base;
-
-            free(ptr->next);
+            ptr->next->size += ptr->size;
+            ptr->next->base = ptr->base;
+            free_list_delete(ptr, &merge);
+            ptr = tmp;
         }
-    }
-}
+        else if(ptr->next->base + ptr->next->size == ptr->base){
+            free_list_t *tmp = ptr->next;
+            ptr->next->size += ptr->size;
+            free_list_delete(ptr, &merge);
+            ptr = tmp;
+            
+        }
 
-void free_list_append(int size, int base){
-    // check if head
-    if(free_list_tail == NULL){
+        // check above for merge blocks
+        if(ptr != NULL && ptr->prev != NULL){
+            if(ptr->base + ptr->size == (ptr->prev->base)){
+                ptr->size += ptr->prev->size;
+                free_list_delete(ptr->prev, &merge);
+            }
+            else if(ptr->prev->base + ptr->prev->size == ptr->base){
+                ptr->size += ptr->prev->size;
+                ptr->base = ptr->prev->base;
+                free_list_delete(ptr->prev, &merge);
+
+            }
+        }
+
+        if(ptr == NULL)
+            break;
         
+        if(!merge)
+            ptr=ptr->next;
     }
+}
+
+int free_list_prepend(int base, int size){
+    // check if head
+    free_list_t *tmp  = malloc(sizeof(free_list_t));
+
+    tmp->size = size;
+    tmp->base = base;
+    tmp->next = free_list;
+    tmp->prev = NULL;
+
+    if(free_list != NULL)
+        free_list->prev = tmp;
+    
+    free_list=tmp;
+    return 1;
 
 }
-void free_list_delete(free_list_t * node){
+int free_list_delete(free_list_t * node, bool *merge){
 
+    if(node == NULL)
+        return 0;
+
+    // head
+    if(node == free_list){
+        free_list = node->next;
+
+        if(free_list != NULL)
+            free_list->prev = NULL;
+    }
+
+    if(node->next != NULL)
+        node->next->prev = node->prev;
+    if(node->prev != NULL){
+        node->prev->next = node->next;
+    }
+    
+    free(node);
+
+    if(merge != NULL)
+        *merge = true;
+
+    return 1;
 }
 
 void print_memory(){
     int c = 0;
-    free_list_t list[25];
 
-    printf("FREE LIST:");
+    printf("\nFREE LIST:");
     for(free_list_t *ptr = free_list; ptr != NULL;ptr=ptr->next){
         printf("\n\nFree block %i:\n", c++);
         printf("Base: %i\n", ptr->base);
@@ -220,4 +256,5 @@ void print_memory(){
         printf("Bound: %i\n",ptr->size+ptr->base);
         printf("Size: %i\n", ptr->size);
     }
+    printf("\n\n-------------------");
 }
