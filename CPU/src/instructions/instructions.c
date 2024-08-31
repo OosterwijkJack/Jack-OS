@@ -29,7 +29,7 @@ void _mov() {
         regs[regs[RA2]] = regs[regs[RA1]];
 }
 
-void _add() { // full adder
+void _add() { 
 
     int num1 = get_reg1();
     int num2 = (regs[regs[RA2]]);
@@ -89,7 +89,17 @@ void _not() {
     regs[RA1] = ~num1;
 }
 
-void _cmp() {
+void _cmpb() {
+
+    byte num1 = (byte)get_reg1();
+    byte num2 = (byte)regs[regs[RA2]];
+
+    // subtracts num2 from num1
+    regs[RCF] = get_comp_flag(num1-num2);
+
+}
+
+void _cmpl() {
     int num1 = (int)get_reg1();
     int num2 = (int)regs[regs[RA2]];
 

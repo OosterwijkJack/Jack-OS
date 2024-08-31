@@ -1,3 +1,1 @@
-add 1,R0
-cmp 42069,R0
-jne 1
+add 25,R0
