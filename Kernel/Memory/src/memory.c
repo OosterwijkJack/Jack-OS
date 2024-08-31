@@ -7,21 +7,24 @@ note: base is inclusive bound is exclusive
 
 */
 
-prgm *loaded_progams = NULL;
+prgm *program_list = NULL;
 unsigned char ram[RAM_SIZE] = {0};
-free_list_t *free_list = NULL;
+free_list_t *free_list_head = NULL;
+free_list_t *free_list_tail = NULL;
 
 int cur_pid = 1;
 
 int main(void){
     init_memory();
+    
     int p1 = allocate_program(100);
-    int p2 = allocate_program(1000);
+    int p2 = allocate_program(100);
+    int p3 = allocate_program(100);
 
+    deallocate_program(p3);
     deallocate_program(p2);
+    deallocate_program(p1);
 
-    int p3 = allocate_program(1000);
-    int p4 = allocate_program(5);
     print_memory();
 }
 
@@ -38,6 +41,7 @@ void init_memory(){
     new->base = 0;
     new->size = RAM_SIZE;
     new->next = free_list;
+    new->prev = free_list;
     free_list = new;
 
 
@@ -73,8 +77,8 @@ int allocate_program(int size){
     new_program->size = size;
     new_program->pid = cur_pid++;
 
-    new_program->next = loaded_progams;
-    loaded_progams = new_program; // prepend
+    new_program->next = program_list;
+    program_list = new_program; // prepend
 
     // [update the free list]
     int free_block_size = best->size;
@@ -113,7 +117,7 @@ int allocate_program(int size){
 
 int deallocate_program(int pid){
     prgm *program = NULL;
-    for(prgm  *ptr = loaded_progams; ptr != NULL; ptr=ptr->next){
+    for(prgm  *ptr = program_list; ptr != NULL; ptr=ptr->next){
         if(ptr->pid == pid){
             program = ptr;
             break;
@@ -139,14 +143,14 @@ int deallocate_program(int pid){
     free_list = new_free;    
 
     // [free node]
-    if(program == loaded_progams){
-        prgm *tmp = loaded_progams;
-        loaded_progams = loaded_progams->next;
+    if(program == program_list){
+        prgm *tmp = program_list;
+        program_list = program_list->next;
         free(tmp);
     }
     
     else{
-        for(prgm *ptr = loaded_progams; ptr != NULL; ptr=ptr->next){
+        for(prgm *ptr = program_list; ptr != NULL; ptr=ptr->next){
 
             if(ptr->next == program){
                 ptr->next = ptr->next->next;
@@ -162,6 +166,40 @@ int deallocate_program(int pid){
 
 void merge_free_nodes(){
 
+    // free nodes that have neighbouring node with the same base as nodes bound
+     if((free_list->base + free_list->size) == free_list->next->base){
+        free_list_t *tmp = free_list;
+        free_list = free_list->next;
+
+        free_list->size += tmp->size; // add size
+        free_list->base = tmp->base; // merge base
+
+        free(tmp);
+
+    }   
+    for(free_list_t *ptr = free_list; ptr->next != NULL; ptr=ptr->next){
+        // if base == bound
+        if(ptr->base + ptr->size == (ptr->next->base)){
+            free_list_t *tmp = ptr->next;
+            ptr->next = ptr->next->next;
+
+            ptr->next->next->size += tmp->size;
+            ptr->next->next->base = tmp->base;
+
+            free(ptr->next);
+        }
+    }
+}
+
+void free_list_append(int size, int base){
+    // check if head
+    if(free_list_tail == NULL){
+        
+    }
+
+}
+void free_list_delete(free_list_t * node){
+
 }
 
 void print_memory(){
@@ -176,7 +214,7 @@ void print_memory(){
         printf("Size: %i\n", ptr->size);
     }
     printf("\nPROGRAM LIST:");
-    for(prgm *ptr = loaded_progams; ptr != NULL;ptr=ptr->next){
+    for(prgm *ptr = program_list; ptr != NULL;ptr=ptr->next){
         printf("\n\nPid %i:\n", ptr->pid);
         printf("Base: %i\n", ptr->base);
         printf("Bound: %i\n",ptr->size+ptr->base);

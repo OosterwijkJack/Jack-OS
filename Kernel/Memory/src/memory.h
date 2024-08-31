@@ -4,6 +4,9 @@
 
 #define RAM_SIZE 20000000 // 20mb
 
+#define ISFREE 0
+#define ISPRGM 1
+
 #define NO_MEMORY 0
 
 int cur_pid;
@@ -15,13 +18,15 @@ typedef struct prgm{
     struct prgm *next;
 }prgm;
 
-typedef struct free_list_t{
+typedef struct free_list_t{ // doubly linked list
     int size;
     int base;
     struct free_list_t *next;
+    struct free_list_t *prev;
+    
 }free_list_t;
 
-extern prgm *loaded_progams; // linked list
+extern prgm *program_list; // linked list
 free_list_t *free_list;
 extern unsigned char ram[RAM_SIZE];
 
@@ -34,7 +39,10 @@ void merge_free_nodes(); // merger concurrent free nodes called every deallocati
 // re allocate programs to reduce external fragmentation
 void reallocate_memory_space();
 
-void print_memory();
-
 // translate virtual address to physical address
 int translate_address(int pid, int vaddress);
+
+void free_list_append(int size, int base);
+void free_list_delete(free_list_t * node);
+
+void print_memory();
