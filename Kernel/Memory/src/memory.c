@@ -21,10 +21,9 @@ int main(void){
     int p2 = allocate_program(1500);
     int p3 = allocate_program(120);
 
-    deallocate_program(p3);
+   // deallocate_program(p3);
     deallocate_program(p2);
-    deallocate_program(p1);
-    //deallocate_program(p3);
+   // deallocate_program(p1);
 
     print_memory();
 }
@@ -79,6 +78,11 @@ int allocate_program(int size){
     new_program->pid = cur_pid++;
 
     new_program->next = program_list;
+    new_program->prev = NULL;
+
+    if(program_list != NULL)
+        program_list->prev = new_program;
+
     program_list = new_program; // prepend
 
     // [update the free list]
@@ -116,38 +120,25 @@ int deallocate_program(int pid){
 
     
     // add back into free space list
-    free_list_prepend(program->base, program->size);
-
-   
-    
-    
-
-    
+    free_list_prepend(program->base, program->size); 
+ 
     // [free node]
     if(program == program_list){
-        prgm *tmp = program_list;
-        program_list = program_list->next;
-        free(tmp);
-    }
-    else{
-        prgm *tmp = program->next;
-        program->base = tmp->base;
-        program->size = tmp->size;
-        program->pid = tmp->pid;
-        program->next = tmp->next;
-    }
-    /*
-    else{
-        for(prgm *ptr = program_list; ptr != NULL; ptr=ptr->next){
+        program_list = program->next;
 
-            if(ptr->next == program){
-                ptr->next = ptr->next->next;
-                free(program);
-                break;
-            }
+        if(program_list != NULL){
+            program_list->prev = NULL;
         }
     }
-    */
+   
+    if(program->next != NULL){
+        program->next->prev = program->prev;
+    }
+    if(program->prev != NULL){
+        program->prev->next = program->next;
+    }
+    free(program);
+
     merge_free_nodes(); // check if any free nodes can be merged
     return 1; // success
 }

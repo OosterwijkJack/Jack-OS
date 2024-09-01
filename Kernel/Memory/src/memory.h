@@ -11,14 +11,16 @@
 
 int cur_pid;
 
+// doubly linked lists
 typedef struct prgm{
     int base; // where program starts in physical memory
     int size; // size the program occupies
     int pid; // program id
     struct prgm *next;
+    struct prgm *prev;
 }prgm;
 
-typedef struct free_list_t{ // doubly linked list
+typedef struct free_list_t{ 
     int size;
     int base;
     struct free_list_t *next;
