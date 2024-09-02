@@ -35,7 +35,7 @@ extern unsigned char ram[RAM_SIZE];
 void init_memory();
 
 // allocate using segmentation and best fit, returns the pid
-int allocate_program(int size, int* pid);
+int allocate_program(int size, int* pid, char* prgmCode[]);
 int deallocate_program(int pid);
 void merge_free_nodes(); // merger concurrent free nodes called every deallocation
 // re allocate programs to reduce external fragmentation
@@ -49,5 +49,7 @@ int free_list_delete(free_list_t * node, bool *merge);
 
 int program_list_prepend(int base, int size, int pid);
 int program_list_delete(prgm* node);
+
+int zero_memory(int base, int bound);
 
 void print_memory();

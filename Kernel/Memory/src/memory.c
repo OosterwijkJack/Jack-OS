@@ -17,13 +17,6 @@ int cur_pid = 1;
 int main(void){
     init_memory();
 
-    int p1 = allocate_program(1000);
-    int p2 = allocate_program(1500);
-    int p3 = allocate_program(120);
-
-   // deallocate_program(p3);
-    deallocate_program(p2);
-   // deallocate_program(p1);
 
     print_memory();
 }
@@ -47,7 +40,7 @@ void init_memory(){
 
 }
 
-int allocate_program(int size, int* pid){
+int allocate_program(int size, int* pid, char* prgmCode[]){
     // [find empy space based on best fit]
     free_list_t *best = NULL;
 
@@ -126,6 +119,8 @@ int deallocate_program(int pid){
     
     // add back into free space list
     free_list_prepend(program->base, program->size); 
+
+    zero_memory(program->base, program->base);
     program_list_delete(program);
 
     merge_free_nodes(); // check if any free nodes can be merged
@@ -288,8 +283,18 @@ void reallocate_memory_space(){
     }
     
     for(prgm *ptr = prgm_buffer; ptr != NULL; ptr=ptr->next){
-        allocate_program(ptr->size);
+        //allocate_program(ptr->size, NULL);
     }
+}
+
+int zero_memory(int base, int bound){
+    if(base < 0 || bound > RAM_SIZE)
+        return 0;
+
+    for(int i = base; i < bound; i++){
+        ram[i] = 0;
+    }
+    return 1;
 }
 
 void print_memory(){
