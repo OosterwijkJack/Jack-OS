@@ -31,7 +31,7 @@ typedef struct free_list_t{
 extern prgm *program_list; // linked list
 free_list_t *free_list;
 extern unsigned char ram[RAM_SIZE];
-
+extern unsigned char swap[RAM_SIZE+10000000];
 void init_memory();
 
 // allocate using segmentation and best fit, returns the pid
