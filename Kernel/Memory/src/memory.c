@@ -47,7 +47,7 @@ void init_memory(){
 
 }
 
-int allocate_program(int size){
+int allocate_program(int size, int* pid){
     // [find empy space based on best fit]
     free_list_t *best = NULL;
 
@@ -75,7 +75,11 @@ int allocate_program(int size){
 
     new_program->base = best->base;
     new_program->size = size;
-    new_program->pid = cur_pid++;
+
+    if(pid == NULL)
+        new_program->pid = cur_pid++;
+    else
+        new_program->pid = *pid;
 
     new_program->next = program_list;
     new_program->prev = NULL;
@@ -106,6 +110,7 @@ int allocate_program(int size){
 }
 
 int deallocate_program(int pid){
+    // find program from pid
     prgm *program = NULL;
     for(prgm  *ptr = program_list; ptr != NULL; ptr=ptr->next){
         if(ptr->pid == pid){
@@ -121,23 +126,7 @@ int deallocate_program(int pid){
     
     // add back into free space list
     free_list_prepend(program->base, program->size); 
- 
-    // [free node]
-    if(program == program_list){
-        program_list = program->next;
-
-        if(program_list != NULL){
-            program_list->prev = NULL;
-        }
-    }
-   
-    if(program->next != NULL){
-        program->next->prev = program->prev;
-    }
-    if(program->prev != NULL){
-        program->prev->next = program->next;
-    }
-    free(program);
+    program_list_delete(program);
 
     merge_free_nodes(); // check if any free nodes can be merged
     return 1; // success
@@ -203,6 +192,12 @@ int free_list_prepend(int base, int size){
     // check if head
     free_list_t *tmp  = malloc(sizeof(free_list_t));
 
+    if(tmp == NULL){
+        printf("Program list prepend malloc fail\n");
+        exit(EXIT_FAILURE);
+    }
+
+
     tmp->size = size;
     tmp->base = base;
     tmp->next = free_list;
@@ -242,7 +237,60 @@ int free_list_delete(free_list_t * node, bool *merge){
     return 1;
 }
 
+int program_list_prepend(int base, int size, int pid){
+    prgm *tmp  = malloc(sizeof(prgm));
 
+    if(tmp == NULL){
+        printf("Program list prepend malloc fail\n");
+        exit(EXIT_FAILURE);
+    }
+
+    tmp->size = size;
+    tmp->base = base;
+    tmp->pid = pid;
+    tmp->next = program_list;
+    tmp->prev = NULL;
+
+    if(program_list != NULL)
+        program_list->prev = tmp;
+    
+    program_list=tmp;
+    return 1;
+}
+int program_list_delete(prgm* node){
+    if(node == NULL)
+        return 0;
+
+    // head
+    if(node == program_list){
+        program_list = node->next;
+
+        if(program_list != NULL)
+            program_list->prev = NULL;
+    }
+
+    if(node->next != NULL)
+        node->next->prev = node->prev;
+    if(node->prev != NULL){
+        node->prev->next = node->next;
+    }
+    
+    free(node);
+    return 1;
+}
+
+void reallocate_memory_space(){
+    prgm *prgm_buffer = NULL;
+
+    for(prgm *ptr = program_list; ptr != NULL; ptr=ptr->next){
+        program_list_prepend(ptr->base, ptr->size, ptr->pid);
+        deallocate_program(ptr->pid);
+    }
+    
+    for(prgm *ptr = prgm_buffer; ptr != NULL; ptr=ptr->next){
+        allocate_program(ptr->size);
+    }
+}
 
 void print_memory(){
     int c = 0;
