@@ -1,8 +1,10 @@
 CC=gcc
 
-CFLAGS = -I. -g
+SRC_DIR_CPU = /home/jack/Desktop/Jack-OS/CPU/src
 
-SRCS = memory.c 
+CFLAGS = -I. -I${SRC_DIR_CPU} -I${SRC_DIR_CPU}/instructions -g
+
+SRCS = memory.c  ${SRC_DIR_CPU}/cpu.c ${SRC_DIR_CPU}/instructions/instructions.c
 
 EXEC=mem
 

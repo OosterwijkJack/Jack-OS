@@ -3,7 +3,7 @@
 # In the future the assembler will be written in my assembly language then transformed 
 # into machine language that runs on my simulated cpu via this program. Then it will 
 # be able to run in my operating system’s environment 
-# cp '/home/jack/Desktop/Operating Systems/Jack-OS/CPU/assembler/jasm /home/jack/.local/bin
+# cp /home/jack/Desktop/Jack-OS/CPU/assembler/jasm /home/jack/.local/bin
 
 import sys
 
@@ -113,8 +113,14 @@ def assemble_no_labels():
     f.close()
 
     f = open(sys.argv[2],'w')
-    for i in bits:
-        f.write(i + "\n")
+
+    # split 4 byte operation into 1 byte
+    for i in (bits):
+        for j in range(len(i)):
+            f.write(i[j])
+
+            if((j+1) % 8 == 0 ):
+                f.write("\n")
     f.close()
         
 

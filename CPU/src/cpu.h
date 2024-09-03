@@ -45,8 +45,7 @@ extern int regs[REGISTER_COUNT];
 // array of void pointers that contains methods to handle incoming instructions
 extern void(*Instructions[INSTRUCTION_COUNT])(void);
 
-void execute_program();
-int binarys_to_int(char * s, size_t size); // binary string to int
+void execute_instruction(int opCode); // binary string to int
 int full_adder(void * num1, void *num2);
 void load_program(int argc, char*argv[]);
 
