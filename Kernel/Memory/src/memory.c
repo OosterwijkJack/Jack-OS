@@ -31,6 +31,8 @@ int main(void){
 
     deallocate_program(p1, &prgm_list, &free_list, ram);
     deallocate_program(p3, &prgm_list, &free_list, ram);
+    //deallocate_program(p4, &prgm_list, &free_list, ram);
+    //deallocate_program(p2, &prgm_list, &free_list, ram);
     reallocate_memory_space();
 
     print_memory();
@@ -39,7 +41,7 @@ int main(void){
 
 void init_memory(){
     // initiate free list as the entire region
-    free_list_t *new = malloc(sizeof(free_list));
+    free_list_t *new = malloc(sizeof(free_list_t));
 
     if(new == NULL){
         printf("Init memory malloc fail\n");
@@ -52,7 +54,7 @@ void init_memory(){
     new->prev = NULL;
     free_list = new;
 
-    new = malloc(sizeof(free_list));
+    new = malloc(sizeof(free_list_t));
 
     if(new == NULL){
         printf("Init memory malloc fail\n");
@@ -104,14 +106,14 @@ int allocate_program(int size, int* pid, FILE* prgmCode, free_list_t **w_free_li
     free_list_delete(best, NULL, w_free_list);
 
     // add new smaller block to free list
-    if(prgm_list->size != free_block_size){ // avoid creating free block of size 0
+    if((*w_prgm_list)->size != free_block_size){ // avoid creating free block of size 0
         free_list_t *new_free = malloc(sizeof(free_list_t));
-        new_free->base = prgm_list->size + prgm_list->base;
+        new_free->base = (*w_prgm_list)->size + (*w_prgm_list)->base;
         new_free->size = free_block_size - size;
-        new_free->next = free_list;
+        new_free->next = *w_free_list;
         *w_free_list = new_free;
     }
-    return prgm_list->pid;
+    return (*w_prgm_list)->pid;
 
 }
 
@@ -136,65 +138,57 @@ int deallocate_program(int pid, prgm **w_prgm_list, free_list_t **w_free_list, c
     zero_memory(program->base, program->base+program->size, mem);
     program_list_delete(program, w_prgm_list);
 
-    //merge_free_nodes(w_free_list); // check if any free nodes can be merged
+    merge_free_nodes(w_free_list); // check if any free nodes can be merged
     return 1; // success
 }
 
 void merge_free_nodes(free_list_t **w_free_list){
 
-    // free nodes that have neighbouring node with the same base as nodes bound
-     if(((*w_free_list)->base + (*w_free_list)->size) == (*w_free_list)->next->base){
-        free_list_t *tmp = *w_free_list;
-        *w_free_list = (*w_free_list)->next;
+   
+    for(free_list_t *ptr = *w_free_list; ptr != NULL;ptr=ptr->next){
 
-        (*w_free_list)->size += tmp->size; // add size
-        (*w_free_list)->base = tmp->base; // merge base
+        for(free_list_t *ptr2 = *w_free_list; ptr2 != NULL;){
 
-        free(tmp);
+            if(ptr == ptr2){
+                ptr2=ptr2->next;
+                continue;
+            }
 
-    }   
 
-    for(free_list_t *ptr = *w_free_list; ptr->next != NULL;){
-        bool merge = false;
-        // check below for merge blocks
+            bool merge = false;
+            // check below for merge blocks
 
-        // if base == bound
-        if(ptr->base + ptr->size == (ptr->next->base)){
-            free_list_t *tmp = ptr->next;
-            ptr->next->size += ptr->size;
-            ptr->next->base = ptr->base;
-            free_list_delete(ptr, &merge, w_free_list);
-            ptr = tmp;
-        }
-        /*
-        else if(ptr->next->base + ptr->next->size == ptr->base){
-            free_list_t *tmp = ptr->next;
-            ptr->next->size += ptr->size;
-            free_list_delete(ptr, &merge, w_free_list);
-            ptr = tmp;
+            // if base == bound
+            if(ptr->base + ptr->size == (ptr2->base)){
+                free_list_t *tmp = NULL;
+
+                if(ptr2->prev != NULL)
+                    tmp = ptr2->prev;
+                else
+                    tmp=ptr2->next;
+
+                ptr->size += ptr2->size;
+                free_list_delete(ptr2, &merge, w_free_list);
+                ptr2=tmp;
+            }
+            else if(ptr2->base + ptr2->size == ptr->base){
+                free_list_t *tmp = NULL;
+
+                if(ptr2->prev != NULL)
+                    tmp = ptr2->prev;
+                else
+                    tmp=ptr2->next;
+
+                ptr->size += ptr2->size;
+                ptr->base = ptr2->base;
+
+                free_list_delete(ptr2, &merge, w_free_list);
+                ptr2 = tmp;
+            }
             
+            if(!merge)
+                ptr2=ptr2->next;
         }
-        */
-
-        // check above for merge blocks
-        if(ptr != NULL && ptr->prev != NULL){
-            if(ptr->base + ptr->size == (ptr->prev->base)){
-                ptr->size += ptr->prev->size;
-                free_list_delete(ptr->prev, &merge, w_free_list);
-            }
-            else if(ptr->prev->base + ptr->prev->size == ptr->base){
-                ptr->size += ptr->prev->size;
-                ptr->base = ptr->prev->base;
-                free_list_delete(ptr->prev, &merge, w_free_list);
-
-            }
-        }
-
-        if(ptr == NULL)
-            break;
-        
-        if(!merge)
-            ptr=ptr->next;
     }
 }
 
@@ -213,10 +207,10 @@ int free_list_prepend(int base, int size, free_list_t **w_free_list){
     tmp->next = *w_free_list;
     tmp->prev = NULL;
 
-    if(free_list != NULL)
+    if(*w_free_list != NULL)
         (*w_free_list)->prev = tmp;
     
-    free_list=tmp;
+    *w_free_list=tmp;
     return 1;
 
 }
@@ -319,8 +313,6 @@ int reallocate_memory_space(){
         deallocate_program(ptr->pid, &prgm_list, &free_list, ram);
     }
 
-    print_memory();
-    
     // reallocate every program in swp space back into ram contiguously (same thing as above but reversed)
     for(prgm *swpptr = swp_prgm_list; swpptr!=NULL; swpptr=swpptr->next){
         allocate_program(swpptr->size, &swpptr->pid, NULL, &free_list, &prgm_list);
@@ -372,6 +364,7 @@ int write_memory(int base, int bound, FILE* mem){
         int binary = binarys_to_int(buf, 8);
         ram[i] = binary;
     }
+    rewind(mem);
     return 0;
 }
 
