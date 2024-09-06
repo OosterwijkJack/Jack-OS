@@ -1,5 +1,1 @@
-mov 9,R3
-compl 9,R3
-jeq 5
-add 5,R3
-add 5,R3
+add 5,R0

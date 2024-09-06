@@ -59,4 +59,5 @@ int zero_memory(int base, int bound, char *mem);
 int binarys_to_int(char * s, size_t size);
 int write_memory(int base, int bound, FILE* mem);
 
+prgm * get_program(int pid, prgm * w_prgm_list);
 void print_memory();

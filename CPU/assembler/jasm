@@ -115,11 +115,13 @@ def assemble_no_labels():
     f = open(sys.argv[2],'w')
 
     # split 4 byte operation into 1 byte
+    print(bits)
+    input()
     for i in (bits):
-        for j in range(len(i)):
+        for j in range(len(i)-1, -1, -1):
             f.write(i[j])
 
-            if((j+1) % 8 == 0 ):
+            if((j) % 8 == 0):
                 f.write("\n")
     f.close()
         

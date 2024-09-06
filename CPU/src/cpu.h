@@ -48,6 +48,7 @@ extern void(*Instructions[INSTRUCTION_COUNT])(void);
 void execute_instruction(int opCode); // binary string to int
 int full_adder(void * num1, void *num2);
 void load_program(int argc, char*argv[]);
+void display_registers();
 
 
 

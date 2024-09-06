@@ -35,6 +35,26 @@ int main(void){
     //deallocate_program(p2, &prgm_list, &free_list, ram);
     reallocate_memory_space();
 
+    prgm *program = get_program(p2, prgm_list);
+
+    for(int i = program->base; i < program->base+program->size; i+=4){
+        unsigned int opcode = 0; 
+        for(int j = 0; j < 4; j++){
+            printf("%d\n", ram[i+j]);
+            getchar();
+            opcode |= (ram[i + j] << ((j * 8)));
+        }
+
+        if(opcode == 0)
+            break;
+        
+        printf("%i\n", (unsigned int)opcode);
+        getchar();
+
+        execute_instruction(opcode);
+    }
+    display_registers();
+
     print_memory();
 }
 
@@ -375,6 +395,14 @@ int binarys_to_int(char * s, size_t size){
             total += (1 << i);
     }
     return total;
+}
+
+prgm * get_program(int pid, prgm * w_prgm_list){
+    for(prgm * ptr = w_prgm_list; ptr != NULL; ptr=ptr->next){
+        if(ptr->pid == pid)
+            return ptr;
+    }
+    return NULL;
 }
 
 
