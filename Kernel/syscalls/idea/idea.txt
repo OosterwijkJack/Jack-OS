@@ -1,0 +1,19 @@
+syscalls:
+read - read a file or buffer
+write - write to a file or buffer
+open - open a file
+close - close a file
+kill - kill a program from pid
+sleep - sleep (ms)
+create_window - create a window for I/O
+
+
+WINDOWS:
+Each process can create their own window and specify the size of the window.
+window location will be decided by the os
+each window/program will have a stdin and stdout buffer
+
+INPUT:
+when a program initiates an input request the program will be desceduled and
+periodically checked in on until the user has hit enter and filled the stdin buffer
+

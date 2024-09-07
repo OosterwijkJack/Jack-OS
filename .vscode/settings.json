@@ -1,5 +1,6 @@
 {
     "files.associations": {
-        "jacklib.h": "c"
+        "jacklib.h": "c",
+        "calls.h": "c"
     }
 }

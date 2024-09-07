@@ -8,8 +8,8 @@ note: base is inclusive bound is exclusive
 
 */
 
-char ram[RAM_SIZE] = {0};
-char swp[SWP_SIZE] = {0};
+unsigned char ram[RAM_SIZE] = {0};
+unsigned char swp[SWP_SIZE] = {0};
 
 free_list_t *free_list = NULL;
 prgm *prgm_list = NULL;
@@ -20,42 +20,48 @@ prgm *swp_prgm_list = NULL;
 
 int cur_pid = 1;
 
+void print_program(prgm *program){
+    printf("PID: %i\n", program->pid);
+    printf("stdin base: %i\n", 1);
+    printf("stdin bound: %i\n", STDIN_SIZE+1);
+    printf("screen base: %i\n", STDIN_SIZE+1);
+    printf("screen bound: %i\n", STDIN_SIZE+1+program->screen_size);
+    printf("code base: %i\n", program->code_base);
+    printf("code bound: %i\n", program->code_base + program->code_size);
+    printf("heap base: %i\n", program->heap_base);
+    printf("heap bound: %i\n", program->heap_base + program->heap_size);
+    printf("stack base: %i\n", program->size);
+    printf("stack bound: %i\n", program->size - program->stack_size);
+}
+
+
 int main(void){
     init_memory();
     
     FILE *outprogram = fopen("out", "r");
-    int p1 = allocate_program(50, NULL, outprogram, &free_list, &prgm_list);
-    int p2 = allocate_program(50, NULL, outprogram, &free_list, &prgm_list);
-    int p3 = allocate_program(50, NULL, outprogram, &free_list, &prgm_list);
-    int p4 = allocate_program(100, NULL, outprogram, &free_list, &prgm_list);
+    int p1 = allocate_program(50000, NULL, outprogram, &free_list, &prgm_list);
 
-    deallocate_program(p1, &prgm_list, &free_list, ram);
-    deallocate_program(p3, &prgm_list, &free_list, ram);
-    //deallocate_program(p4, &prgm_list, &free_list, ram);
-    //deallocate_program(p2, &prgm_list, &free_list, ram);
-    reallocate_memory_space();
+    prgm *program = get_program(p1, prgm_list);
+    print_program(program);
 
-    prgm *program = get_program(p2, prgm_list);
-
+    /*
+    // ececute code form memory
     for(int i = program->base; i < program->base+program->size; i+=4){
         unsigned int opcode = 0; 
         for(int j = 0; j < 4; j++){
-            printf("%d\n", ram[i+j]);
-            getchar();
-            opcode |= (ram[i + j] << ((j * 8)));
+            opcode |= (ram[i + j] << (((3-j) * 8)));
         }
 
         if(opcode == 0)
             break;
         
-        printf("%i\n", (unsigned int)opcode);
-        getchar();
+        printf("%u\n", (unsigned int)opcode);
 
         execute_instruction(opcode);
     }
     display_registers();
 
-    print_memory();
+    */
 }
 
 
@@ -115,8 +121,15 @@ int allocate_program(int size, int* pid, FILE* prgmCode, free_list_t **w_free_li
     program_list_prepend(best->base, size, pid, w_prgm_list);
 
     // Write program code into memory block
+    int code_size = 0;
     if(prgmCode != NULL)
-        write_memory(best->base, best->base+size,prgmCode);
+        code_size = write_memory((*w_prgm_list)->code_base, size-1,prgmCode);
+    
+    if(code_size == 0) // make sure there is code
+        return 0;   
+    
+    (*w_prgm_list)->code_size = code_size;
+    (*w_prgm_list)->heap_base = (*w_prgm_list)->code_base + code_size;
     
     
     // [update the free list]
@@ -271,6 +284,10 @@ int program_list_prepend(int base, int size, int* pid, prgm **w_prgm_list){
 
     tmp->size = size;
     tmp->base = base;
+    tmp->screen_size = 500;
+    tmp->stack_size = 0;
+    tmp->code_base = STDIN_SIZE + tmp->screen_size + 1;
+
     
     // assign new pid if pid is NULL
     if(pid != NULL)
@@ -361,7 +378,7 @@ int zero_memory(int base, int bound, char * mem){
     return 1;
 }
 
-int write_memory(int base, int bound, FILE* mem){
+int write_memory(int base, int max, FILE* mem){
     if(mem == NULL){
         printf("Invalid file\n");
         exit(EXIT_FAILURE);
@@ -369,9 +386,14 @@ int write_memory(int base, int bound, FILE* mem){
 
     int count = 0;
     char buf[INT_S/4+2];
+    int size = 0;
+    for(int i = base; ;  i++){
 
-    for(int i = base; i < bound;  i++){
-
+        if(i >= max){
+            printf("Program memory exceeds max\n");
+            return 0;
+        }
+        
         if(!fgets(buf,sizeof(buf), mem))
             break;
 
@@ -383,9 +405,10 @@ int write_memory(int base, int bound, FILE* mem){
         }
         int binary = binarys_to_int(buf, 8);
         ram[i] = binary;
+        size++;
     }
     rewind(mem);
-    return 0;
+    return size;
 }
 
 int binarys_to_int(char * s, size_t size){
