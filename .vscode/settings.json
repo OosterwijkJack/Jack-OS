@@ -1,6 +1,11 @@
 {
     "files.associations": {
         "jacklib.h": "c",
-        "calls.h": "c"
+        "calls.h": "c",
+        "stdbool.h": "c",
+        "memory.h": "c",
+        "jmemory.h": "c",
+        "schedule.h": "c",
+        "global.h": "c"
     }
 }

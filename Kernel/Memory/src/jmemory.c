@@ -1,5 +1,4 @@
-#include "memory.h"
-#include "cpu.h"
+#include "jmemory.h"
 
 /*
 
@@ -11,58 +10,8 @@ note: base is inclusive bound is exclusive
 unsigned char ram[RAM_SIZE] = {0};
 unsigned char swp[SWP_SIZE] = {0};
 
-free_list_t *free_list = NULL;
-prgm *prgm_list = NULL;
-
-free_list_t *swp_free_list = NULL;
-prgm *swp_prgm_list = NULL;
-
 
 int cur_pid = 1;
-
-void print_program(prgm *program){
-    printf("PID: %i\n", program->pid);
-    printf("stdin base: %i\n", 1);
-    printf("stdin bound: %i\n", STDIN_SIZE+1);
-    printf("screen base: %i\n", STDIN_SIZE+1);
-    printf("screen bound: %i\n", STDIN_SIZE+1+program->screen_size);
-    printf("code base: %i\n", program->code_base);
-    printf("code bound: %i\n", program->code_base + program->code_size);
-    printf("heap base: %i\n", program->heap_base);
-    printf("heap bound: %i\n", program->heap_base + program->heap_size);
-    printf("stack base: %i\n", program->size);
-    printf("stack bound: %i\n", program->size - program->stack_size);
-}
-
-
-int main(void){
-    init_memory();
-    
-    FILE *outprogram = fopen("out", "r");
-    int p1 = allocate_program(50000, NULL, outprogram, &free_list, &prgm_list);
-
-    prgm *program = get_program(p1, prgm_list);
-    print_program(program);
-
-    /*
-    // ececute code form memory
-    for(int i = program->base; i < program->base+program->size; i+=4){
-        unsigned int opcode = 0; 
-        for(int j = 0; j < 4; j++){
-            opcode |= (ram[i + j] << (((3-j) * 8)));
-        }
-
-        if(opcode == 0)
-            break;
-        
-        printf("%u\n", (unsigned int)opcode);
-
-        execute_instruction(opcode);
-    }
-    display_registers();
-
-    */
-}
 
 
 void init_memory(){
@@ -284,9 +233,19 @@ int program_list_prepend(int base, int size, int* pid, prgm **w_prgm_list){
 
     tmp->size = size;
     tmp->base = base;
+
+    tmp->stdin_base = 1; // 0 reserved for null
+
+    tmp->stdout_base = STDIN_SIZE + tmp->stdin_base;
+
+    tmp->screen_base = tmp->stdout_base + STDOUT_SIZE;
     tmp->screen_size = 500;
+
+    tmp->code_base = tmp->screen_base + tmp->screen_size;
+
     tmp->stack_size = 0;
-    tmp->code_base = STDIN_SIZE + tmp->screen_size + 1;
+
+    tmp->waiting_for_io = false;
 
     
     // assign new pid if pid is NULL

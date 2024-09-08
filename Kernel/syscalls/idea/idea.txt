@@ -7,6 +7,9 @@ kill - kill a program from pid
 sleep - sleep (ms)
 create_window - create a window for I/O
 
+int (interrupt) command will take an argument which will act as an index
+for selecting what syscall the user wants. Then R9,R8,R7 can will be pass registers
+for sending arguments to syscall
 
 WINDOWS:
 Each process can create their own window and specify the size of the window.

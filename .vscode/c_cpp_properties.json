@@ -4,7 +4,12 @@
             "name": "Linux",
             "includePath": [
                 "${workspaceFolder}/**",
-                "${workspaceFolder}/CPU/src"
+                "${workspaceFolder}/CPU/src",
+                "${workspaceFolder}/Kernel/Memory/src",
+                "${workspaceFolder}/CPU/src/instructions",
+                "${workspaceFolder}/Kernel/Scheduling",
+                "${workspaceFolder}/Kernel/Globals",
+                "${workspaceFolder}/Kernel/syscalls"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/gcc",

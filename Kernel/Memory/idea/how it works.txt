@@ -1,4 +1,7 @@
 Kernel uses segmentation to allocate program memory
 base 0 for null pointers
-1 - 500 screen
-500 - 1000 stdin buffer
+1-501 stdin buffer
+screen
+program code
+heap
+stack
