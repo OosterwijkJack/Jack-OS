@@ -1,0 +1,5 @@
+mov 1,rek
+mov 1530,rjo
+mov 10,r9
+int 0
+

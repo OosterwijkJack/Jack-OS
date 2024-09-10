@@ -10,7 +10,7 @@ int _open();
 int _close();
 int _kill();
 int _sleep();
-int _create_window();
+int _set_window();
 
 extern int(*sysapi[CALL_COUNT])(void); // array of syscall functions
 

@@ -35,4 +35,19 @@ int main(void){
 
     prgm* program = get_program(p1, prgm_list);
     print_program(program);
+
+    schedule_init();
+
+    for(int i = program->base+program->code_base; i < program->base+program->code_base+program->code_base; i+=4){
+        unsigned int opcode = 0; 
+        for(int j = 0; j < 4; j++){
+            opcode |= (ram[i + j] << (((3-j) * 8)));
+        }
+        if(opcode == 0)
+            break;
+        
+        execute_instruction(opcode);
+    }
+
+
 }   

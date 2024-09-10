@@ -1,6 +1,7 @@
 #pragma once
 #include <unistd.h>
 #include "cpu.h"
+#include "calls.h"
 
 // -----instructions-----
 void _add();
@@ -26,4 +27,5 @@ void _push(); // push to stack
 void _pop(); // pop from stack
 void _load(); // load memory to heap
 void _hfree(); // free memory from heap
+void _int();
 // -----------------

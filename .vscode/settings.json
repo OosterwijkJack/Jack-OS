@@ -6,6 +6,8 @@
         "memory.h": "c",
         "jmemory.h": "c",
         "schedule.h": "c",
-        "global.h": "c"
+        "global.h": "c",
+        "cpu.h": "c",
+        "instructions.h": "c"
     }
 }

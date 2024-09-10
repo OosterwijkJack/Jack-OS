@@ -26,7 +26,8 @@ void(*Instructions[INSTRUCTION_COUNT])(void) = {
     _save,
     _lea,
     _push,
-    _pop
+    _pop,
+    _int
 };
 
 void display_registers(){
@@ -38,7 +39,7 @@ void display_registers(){
 }
 
 
-void execute_instruction(int opCode){
+void execute_instruction(unsigned int opCode){
     // reset argument registers
     regs[RA1] = 0;
     regs[RA2] = 0;
@@ -59,16 +60,14 @@ void execute_instruction(int opCode){
         printf("Invalid instruction\n");
         return;
     }
-    
-    if(arg1 != 0){
-        if(isLiteral != 0){
-            regs[RA1] = arg1;
-            regs[RFG] = FLAG_ISLITERAL; // set flag register so instruction knows wether to use value or register
-        }
-        else{
-            regs[RA1] = regs[arg1-1]; // instruction 0 = null so decrement by one (1 = R0) in context of instructions
-            regs[RFG] = FLAG_ISREG;
-        }
+
+    if(isLiteral != 0){
+        regs[RA1] = arg1;
+        regs[RFG] = FLAG_ISLITERAL; // set flag register so instruction knows wether to use value or register
+    }
+    else{
+        regs[RA1] = regs[arg1-1]; // instruction 0 = null so decrement by one (1 = R0) in context of instructions
+        regs[RFG] = FLAG_ISREG;
     }
 
     if (arg2 > REGISTER_COUNT+1){

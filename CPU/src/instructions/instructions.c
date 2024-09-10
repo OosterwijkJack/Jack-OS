@@ -157,3 +157,8 @@ void _push() {
 void _pop() {
     write(STDOUT_FILENO, "pop\n", sizeof("pop\n") - 1);
 }
+void _int(){
+    write(STDOUT_FILENO, "int\n", 4);
+
+    int rc = sysapi[regs[RA1]]();
+}
