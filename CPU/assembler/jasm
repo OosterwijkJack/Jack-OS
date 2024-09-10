@@ -78,6 +78,9 @@ def assemble_no_labels():
         if(len(i) <= 1):
             continue
 
+        if i.startswith("//"):
+            continue
+
         curstr = ""
 
         space = i.find(" ")
