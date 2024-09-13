@@ -1,1 +1,5 @@
-add 5,R0
+add 50
+
+main:
+add 100,r0
+jmp main

@@ -55,6 +55,7 @@ reg_names = {
     "rjo": 19
 }
 
+label_dict = {}
 
 def main ():
 
@@ -64,13 +65,13 @@ def main ():
 
     assembled = ''
     
-    #convert_labels(sys.argv[1]) # converts labels to numbers
+    convert_labels() # converts labels to numbers
     assemble_no_labels() # assembles
 
     #open(sys.argv[2], 'w').write(assembled)
 
 def assemble_no_labels():
-    f = open(sys.argv[1], 'r')
+    f = open(sys.argv[2], 'r')
     bits = []
 
     for a,i in enumerate(f.readlines()):
@@ -90,7 +91,7 @@ def assemble_no_labels():
         try:
             curstr += str(bin(func_table[instruction]))[2:].zfill(5) # convert instruction to binary of 5 bits
         except KeyError:
-            print(f"Invalid instruction '{instruction}' on line {a}")
+            print(f"Invalid instruction '{instruction}'")
             exit(1)
         except Exception as e:
             print(e)
@@ -102,8 +103,15 @@ def assemble_no_labels():
         
         if(arg1 in reg_names.keys()):
             curstr += '0'
-            curstr += str(bin(reg_names[arg1])[2:].zfill(21))
-        else:
+            try:
+                curstr += str(bin(reg_names[arg1])[2:].zfill(21))
+            except KeyError:
+                print(f"Invalid register '{arg1}'")
+                exit(1)
+            except Exception as e:
+                print(e)
+                exit(1)
+        else:   
             if(int(arg1) > ARG1_SIZE):
                 print(f"Arg1 number exceeds limit of {ARG1_SIZE} on line {a+1}")
                 exit(1)
@@ -112,7 +120,14 @@ def assemble_no_labels():
         
         if(comma != -1):
             arg2 = i[comma+1: len(i.rstrip())]
-            curstr += str(bin(reg_names[arg2]))[2:].zfill(5)
+            try:
+                curstr += str(bin(reg_names[arg2]))[2:].zfill(5)
+            except KeyError:
+                print(f"Invalid register '{arg2}'")
+                exit(1)
+            except Exception as e:
+                print(e)
+                exit(1)
         else:
             curstr += "0"*5
 
@@ -132,8 +147,44 @@ def assemble_no_labels():
         
 
 
-def convert_labels(file):
-    pass
+def convert_labels():
+    lines = []
+    with open(sys.argv[1], 'r') as f:
+        for i in f.readlines():
+            lines.append(i)
+        f.close()
+
+    # add labels to label dict and remove them from lines list
+    line_count = 0
+    lines_new = []
+    for j in lines:
+        j = str(j)
+        j = j.strip()
+
+        if(j.strip() == ''): # ignore white space
+            continue
+
+        if(j.endswith(":")):
+            label = j[0:-1] 
+            if label in label_dict.keys(): # check if label has already been defined
+                print(f"Two definitions of label {label}")
+                exit(1)
+            else:
+                label_dict[label] = line_count
+        else:
+            lines_new.append(j) # if not a label add to new line list and increment line count
+            line_count+=1
+
+    file = open(sys.argv[2], 'w')
+    for i in lines_new:
+        for j in label_dict.keys():
+
+            if j in i:
+                file.write(i.replace(j, str(label_dict[j])) + "\n")
+            else:
+                file.write(i + "\n")
+
+        
 
 
 if __name__ == "__main__":
