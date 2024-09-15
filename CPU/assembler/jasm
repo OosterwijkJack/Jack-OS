@@ -28,10 +28,9 @@ func_table = {
     "jmp": 15,
     "load": 16,
     "save": 17,
-    "lea": 18,
-    "push": 19,
-    "pop": 20,
-    "int": 21}
+    "push": 18,
+    "pop": 19,
+    "int": 20}
 
 reg_names = {
     "r0": 1,
@@ -52,7 +51,11 @@ reg_names = {
     "ra1": 16,
     "ra2": 17,
     "rek": 18,
-    "rjo": 19
+    "rjo": 19,
+}
+
+constants = {
+    "STDIN": 1
 }
 
 label_dict = {}
@@ -75,6 +78,11 @@ def assemble_no_labels():
     bits = []
 
     for a,i in enumerate(f.readlines()):
+
+        for e in constants.keys():
+            if(e in i):
+                i = i.replace(e, str(constants[e]))
+
 
         if(len(i) <= 1):
             continue
@@ -137,12 +145,17 @@ def assemble_no_labels():
     f = open(sys.argv[2],'w')
 
     # split 4 byte operation into 1 byte
-    for i in (bits):
-        for j in range(len(i)):
-            f.write(i[j])
+    for bit_str in (bits):
+        bytes_data = []
+        for i in range(0,len(bit_str),8):
+            bytes_data.append(bit_str[i:i+8])
 
-            if((j+1) % 8 == 0):
-                f.write("\n")
+            #  reverse order        
+        bytes_data.reverse()
+
+        for i in bytes_data:
+            f.write(i + "\n")
+
     f.close()
         
 
@@ -164,6 +177,13 @@ def convert_labels():
         if(j.strip() == ''): # ignore white space
             continue
 
+        if(j.startswith)("//"):
+            continue
+
+        tmp = j.find("//")
+        if(tmp != -1):
+            j = j[0:tmp]
+
         if(j.endswith(":")):
             label = j[0:-1] 
             if label in label_dict.keys(): # check if label has already been defined
@@ -176,13 +196,18 @@ def convert_labels():
             line_count+=1
 
     file = open(sys.argv[2], 'w')
-    for i in lines_new:
+    for i in lines_new:        
+        if(len(label_dict) <= 0):
+            file.write(i + "\n")
+            continue
+
         for j in label_dict.keys():
 
             if j in i:
                 file.write(i.replace(j, str(label_dict[j])) + "\n")
-            else:
+            else: 
                 file.write(i + "\n")
+    file.close()
 
         
 

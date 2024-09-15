@@ -26,7 +26,8 @@ typedef struct prgm{
     int code_size; // program size
     int heap_base; // where is heap
     int heap_size; 
-    int stack_size; // stack is always at bottom of program
+
+    int stack_size;
 
     bool waiting_for_io; 
 
@@ -48,4 +49,4 @@ extern prgm *prgm_list;
 extern free_list_t *swp_free_list;
 extern prgm *swp_prgm_list;
 
-// 
+int split_bytes(void *bytes_in, int n_bytes, char* bytes_out[]); // splits any type into binary array of chars

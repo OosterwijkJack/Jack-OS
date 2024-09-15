@@ -74,8 +74,11 @@ int allocate_program(int size, int* pid, FILE* prgmCode, free_list_t **w_free_li
     if(prgmCode != NULL)
         code_size = write_memory((*w_prgm_list)->code_base, size-1,prgmCode);
     
-    if(code_size == 0) // make sure there is code
-        return 0;   
+    if(code_size == 0){
+        // make sure there is code
+        printf("Program code empty\n");
+        return 0;  
+    }  
     
     (*w_prgm_list)->code_size = code_size;
     (*w_prgm_list)->heap_base = (*w_prgm_list)->code_base + code_size;

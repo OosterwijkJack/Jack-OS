@@ -22,10 +22,7 @@ void _jmp(); // jump
 void _load(); // load data from memore
 void _save(); // save data to memory
 void _mov(); // move data between registers
-void _lea(); // load effective address
-void _push(); // push to stack
-void _pop(); // pop from stack
-void _load(); // load memory to heap
-void _hfree(); // free memory from heap
+void _push();
+void _pop();
 void _int();
 // -----------------

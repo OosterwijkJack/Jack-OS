@@ -1,5 +1,3 @@
-add 50
+// uses the read syscall
 
-main:
-add 100,r0
-jmp main
+mov 5136,r0// password

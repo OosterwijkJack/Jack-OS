@@ -146,17 +146,14 @@ void _save() {
     write(STDOUT_FILENO, "save\n", sizeof("save\n") - 1);
 }
 
-void _lea() {
-    write(STDOUT_FILENO, "lea\n", sizeof("lea\n") - 1);
+void _push(){
+
 }
 
-void _push() {
-    write(STDOUT_FILENO, "push\n", sizeof("push\n") - 1);
+void _pop(){
+    
 }
 
-void _pop() {
-    write(STDOUT_FILENO, "pop\n", sizeof("pop\n") - 1);
-}
 void _int(){
     write(STDOUT_FILENO, "int\n", 4);
 

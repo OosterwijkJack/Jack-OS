@@ -13,7 +13,7 @@ void print_program(prgm *program){
     printf("heap base: %i\n", program->heap_base);
     printf("heap bound: %i\n", program->heap_base + program->heap_size);
     printf("stack base: %i\n", program->size);
-    printf("stack bound: %i\n", program->size - program->stack_size);
+    printf("stack bound: %i\n", program->size-program->stack_size);
 }
 
 int main(void){
@@ -34,20 +34,19 @@ int main(void){
     }
 
     prgm* program = get_program(p1, prgm_list);
-    print_program(program);
 
     schedule_init();
 
     for(int i = program->base+program->code_base; i < program->base+program->code_base+program->code_base; i+=4){
         unsigned int opcode = 0; 
         for(int j = 0; j < 4; j++){
-            opcode |= (ram[i + j] << (((3-j) * 8)));
+            opcode |= (ram[i + j] << ((j * 8)));
         }
         if(opcode == 0)
             break;
         
         execute_instruction(opcode);
     }
-
+    display_registers();
 
 }   

@@ -24,7 +24,6 @@ void(*Instructions[INSTRUCTION_COUNT])(void) = {
     _jmp,
     _load,
     _save,
-    _lea,
     _push,
     _pop,
     _int
