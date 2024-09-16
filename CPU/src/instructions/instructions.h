@@ -2,6 +2,7 @@
 #include <unistd.h>
 #include "cpu.h"
 #include "calls.h"
+#include "memory.h"
 
 // -----instructions-----
 void _add();
@@ -19,9 +20,8 @@ void _jlt(); // jump less than
 void _jgt(); // jump greater than
 void _jne(); // jump not equals
 void _jmp(); // jump
-void _load(); // load data from memore
-void _save(); // save data to memory
-void _mov(); // move data between registers
+void _movb(); // move data between registers
+void _movd();
 void _push();
 void _pop();
 void _int();

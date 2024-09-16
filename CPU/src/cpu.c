@@ -10,7 +10,8 @@ void(*Instructions[INSTRUCTION_COUNT])(void) = {
     _sub,
     _mul,
     _div,
-    _mov,
+    _movb,
+    _movd,
     _and,
     _or,
     _xor,
@@ -22,8 +23,6 @@ void(*Instructions[INSTRUCTION_COUNT])(void) = {
     _jgt,
     _jne,
     _jmp,
-    _load,
-    _save,
     _push,
     _pop,
     _int
@@ -46,11 +45,11 @@ void execute_instruction(unsigned int opCode){
 
     // get instruction type/function
     unsigned int instructionType = (opCode >> 27) & 0x3f; // 0x3f = 111111 (six 1 bits)
-    unsigned int isLiteral = (opCode>>26) & 0x1;// 1
-    unsigned int arg1 = (opCode>>5) & 0x1fffff; // 1111111111111111
+    unsigned int identifier = (opCode>>25) & 0x3;// 1
+    unsigned int arg1 = (opCode>>5) & 0xfffff; // 111111111111111
     unsigned int arg2 = (opCode) & 0x1f; // 11111
 
-    if((isLiteral == 0 && arg1 > REGISTER_COUNT) || arg2 > REGISTER_COUNT){
+    if(((identifier == FLAG_ISREG || identifier == FLAG_ISADDR_REG) && arg1 > REGISTER_COUNT) || arg2 > REGISTER_COUNT){
         printf("Invalid register\n");
         return;
     }
@@ -60,13 +59,13 @@ void execute_instruction(unsigned int opCode){
         return;
     }
 
-    if(isLiteral != 0){
-        regs[RA1] = arg1;
-        regs[RFG] = FLAG_ISLITERAL; // set flag register so instruction knows wether to use value or register
+    if(identifier == FLAG_ISREG || identifier == FLAG_ISADDR_REG ){
+        regs[RA1] = regs[arg1-1]; // instruction 0 = null so decrement by one (1 = R0) in context of instructions
+        regs[RFG] = identifier;
     }
     else{
-        regs[RA1] = regs[arg1-1]; // instruction 0 = null so decrement by one (1 = R0) in context of instructions
-        regs[RFG] = FLAG_ISREG;
+        regs[RA1] = arg1;
+        regs[RFG] = identifier; // set flag register so instruction knows wether to use value or register
     }
 
     if (arg2 > REGISTER_COUNT+1){

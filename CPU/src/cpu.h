@@ -5,12 +5,13 @@
 #include <signal.h>
 #include <string.h>
 #include "instructions.h"
+#include "schedule.h"
 
 typedef char byte;
 
 #define INT_S 32
 #define REGISTER_COUNT 21
-#define INSTRUCTION_COUNT 21
+#define INSTRUCTION_COUNT 20
 #define INSTRUCTION_SIZE 33 // + 1 for newline
 #define PGM_SIZE 1024
 
@@ -38,10 +39,13 @@ extern int regs[REGISTER_COUNT];
 
 #define FLAG_ISREG 0 // is register
 #define FLAG_ISLITERAL 1 
-#define FLAG_CARRY 2
-#define FLAG_POS 3
-#define FLAG_NEG 4
-#define FLAG_ZRO 5 // zero
+#define FLAG_ISADDR_REG 2
+#define FLAG_ISADDR_LITERAL 3
+#define FLAG_CARRY 4
+#define FLAG_POS 5
+#define FLAG_NEG 6
+#define FLAG_ZRO 7 // zero
+
 
 
 // array of void pointers that contains methods to handle incoming instructions

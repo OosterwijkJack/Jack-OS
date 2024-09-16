@@ -55,7 +55,7 @@ int _read(){
        while(in=getchar()){
             if(in == '\n')
                 break;
-
+            // write input from user char by char
             ram[running_prgm->base+read_addr+bytes_read] = in;
             bytes_read++;
 
@@ -64,9 +64,11 @@ int _read(){
     else{
         // handle file later may implement file descriptors 
     }
+
     for(int i = 0; i < size; i ++){ // write stdin to write address
         ram[write_address+running_prgm->base+i] = ram[running_prgm->base+read_addr+i];
     }
+    ram[running_prgm->base+read_addr+size] = 0; // terminating character
     return bytes_read; 
 }
 

@@ -49,4 +49,7 @@ extern prgm *prgm_list;
 extern free_list_t *swp_free_list;
 extern prgm *swp_prgm_list;
 
-int split_bytes(void *bytes_in, int n_bytes, char* bytes_out[]); // splits any type into binary array of chars
+void split_bytes(void *bytes_in, size_t n_bytes, char bytes_out[]); // splits any type into binary array of chars
+void merge_bytes(char *bytes_in, size_t n_bytes, unsigned int *out);
+
+extern prgm *running_prgm; 

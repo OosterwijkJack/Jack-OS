@@ -1,4 +1,5 @@
 // uses the read syscall
 
-mov 5136,r0 // password
+movd 10,r0
+
 
