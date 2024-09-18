@@ -58,7 +58,6 @@ int _read(){
             // write input from user char by char
             ram[running_prgm->base+read_addr+bytes_read] = in;
             bytes_read++;
-
        }
     }
     else{
@@ -68,7 +67,7 @@ int _read(){
     for(int i = 0; i < size; i ++){ // write stdin to write address
         ram[write_address+running_prgm->base+i] = ram[running_prgm->base+read_addr+i];
     }
-    ram[running_prgm->base+read_addr+size] = 0; // terminating character
+    ram[running_prgm->base+write_address+size] = 0; // terminating character
     return bytes_read; 
 }
 

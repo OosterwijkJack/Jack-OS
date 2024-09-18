@@ -1,5 +1,18 @@
 // uses the read syscall
 
-movd 10,r0
+movd rsp,rsb
+sub 1,rsp
+
+movd STDIN,rek
+movb STDIN,rsp
+movd 1,r9
+
+movd [rsp],r1
+compb 65,r1
+jeq success
+
+success:
+movd 100,r0
+
 
 

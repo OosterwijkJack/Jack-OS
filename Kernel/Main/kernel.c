@@ -47,6 +47,7 @@ int main(void){
         
         execute_instruction(opcode);
     }
+    print_program(running_prgm);
     display_registers();
 
 }   

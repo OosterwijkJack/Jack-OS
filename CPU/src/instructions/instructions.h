@@ -22,7 +22,8 @@ void _jne(); // jump not equals
 void _jmp(); // jump
 void _movb(); // move data between registers
 void _movd();
-void _push();
+void _pushb();
+void _pushd();
 void _pop();
 void _int();
 // -----------------

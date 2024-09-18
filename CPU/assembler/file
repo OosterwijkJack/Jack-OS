@@ -1,3 +1,18 @@
 // uses the read syscall
 
-mov 516,r0// password
+movd rsp,rsb
+sub 1,rsp
+
+movd STDIN,rek
+movb [rsp],STDIN
+movd 1,r9
+
+compb 65,[rsp]
+
+jeq success
+
+success:
+mov 100,r0
+
+
+

@@ -23,7 +23,8 @@ void(*Instructions[INSTRUCTION_COUNT])(void) = {
     _jgt,
     _jne,
     _jmp,
-    _push,
+    _pushb,
+    _pushd,
     _pop,
     _int
 };
@@ -44,12 +45,13 @@ void execute_instruction(unsigned int opCode){
 
 
     // get instruction type/function
-    unsigned int instructionType = (opCode >> 27) & 0x3f; // 0x3f = 111111 (six 1 bits)
-    unsigned int identifier = (opCode>>25) & 0x3;// 1
-    unsigned int arg1 = (opCode>>5) & 0xfffff; // 111111111111111
-    unsigned int arg2 = (opCode) & 0x1f; // 11111
+    unsigned int instructionType = (opCode >> 27) & 0x1f; // 0x1f = 11111 (five 1 bits)
+    unsigned int arg1_identifier = (opCode>>25) & 0x3;// 1*3
+    unsigned int arg1 = (opCode>>6) & 0x7ffff; // 1*19
+    unsigned int arg2_identifier = (opCode >> 5) & 0x1;
+    unsigned int arg2 = (opCode) & 0x1f; // 1*5
 
-    if(((identifier == FLAG_ISREG || identifier == FLAG_ISADDR_REG) && arg1 > REGISTER_COUNT) || arg2 > REGISTER_COUNT){
+    if(((arg1_identifier == FLAG_ISREG || arg1_identifier == FLAG_ISADDR_REG1) && arg1 > REGISTER_COUNT) || arg2 > REGISTER_COUNT){
         printf("Invalid register\n");
         return;
     }
@@ -59,13 +61,13 @@ void execute_instruction(unsigned int opCode){
         return;
     }
 
-    if(identifier == FLAG_ISREG || identifier == FLAG_ISADDR_REG ){
+    if(arg1_identifier == FLAG_ISREG || arg1_identifier == FLAG_ISADDR_REG1 ){
         regs[RA1] = regs[arg1-1]; // instruction 0 = null so decrement by one (1 = R0) in context of instructions
-        regs[RFG] = identifier;
+        regs[RFG1] = arg1_identifier;
     }
     else{
         regs[RA1] = arg1;
-        regs[RFG] = identifier; // set flag register so instruction knows wether to use value or register
+        regs[RFG1] = arg1_identifier; // set flag register so instruction knows wether to use value or register
     }
 
     if (arg2 > REGISTER_COUNT+1){
@@ -73,11 +75,14 @@ void execute_instruction(unsigned int opCode){
         return;
     }
 
-    if(arg2 != 0){
+    if(arg2 != 0 ){
         regs[RA2] = arg2-1;
-    }
-        
 
+        if(arg2_identifier)
+            regs[RFG2] = FLAG_ISADDR_REG2;
+       
+    }
+    
     //printf("reg1: %i\n", regs[RA1]);
     //printf("reg2: %i\n", regs[RA2]);
 

@@ -11,7 +11,7 @@ typedef char byte;
 
 #define INT_S 32
 #define REGISTER_COUNT 21
-#define INSTRUCTION_COUNT 20
+#define INSTRUCTION_COUNT 21
 #define INSTRUCTION_SIZE 33 // + 1 for newline
 #define PGM_SIZE 1024
 
@@ -30,21 +30,23 @@ extern int regs[REGISTER_COUNT];
 #define RPC 10  // program counter
 #define RSP 11  // stack pointer
 #define RSB 12  // stack base pointer
-#define RFG 13  // flag register
-#define RCF 14  // compare flag register
-#define RA1 15  // argument 1 reg
-#define RA2 16  // argument 2 reg
-#define REK 17
-#define RJO 18
+#define RFG1 13  // flag register
+#define RFG2 14
+#define RCF 15  // compare flag register
+#define RA1 16  // argument 1 reg
+#define RA2 17  // argument 2 reg
+#define REK 18
+#define RJO 19
 
 #define FLAG_ISREG 0 // is register
 #define FLAG_ISLITERAL 1 
-#define FLAG_ISADDR_REG 2
+#define FLAG_ISADDR_REG1 2
 #define FLAG_ISADDR_LITERAL 3
-#define FLAG_CARRY 4
-#define FLAG_POS 5
-#define FLAG_NEG 6
-#define FLAG_ZRO 7 // zero
+#define FLAG_ISADDR_REG2 4
+#define FLAG_CARRY 5
+#define FLAG_POS 6
+#define FLAG_NEG 7
+#define FLAG_ZRO 8 // zero
 
 
 

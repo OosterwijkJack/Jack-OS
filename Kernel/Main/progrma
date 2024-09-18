@@ -1,7 +1,7 @@
 movd rsp,rsb
 sub 1,rsp
 movd STDIN,rek
-movb [rsp],STDIN
+movb STDIN,rsp
 movd 1,r9
 compb 65,[rsp]
 jeq 7

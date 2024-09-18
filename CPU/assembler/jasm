@@ -30,9 +30,10 @@ func_table = {
     "jgt": 14,
     "jne": 15,
     "jmp": 16,
-    "push": 17,
-    "pop": 18,
-    "int": 19
+    "pushb": 17,
+    "pushd": 18,
+    "pop": 19,
+    "int": 20
 }
 
 reg_names = {
@@ -147,6 +148,7 @@ def get_arg2_bits(text:str):
     if(comma != -1):
         arg2 = text[comma+1: len(text.rstrip())]
         out += str(bin(reg_names[arg2]))[2:].zfill(ARG2_BITS)
+
     else:
         out += "0"*5
     return out
