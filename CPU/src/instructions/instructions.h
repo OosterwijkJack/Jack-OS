@@ -14,7 +14,7 @@ void _or();
 void _xor();
 void _not();
 void _cmpb(); // cmp byte
-void _cmpl(); // cmpl (4 bytes)
+void _cmpd(); // cmpl (4 bytes)
 void _jeq(); // jmp equals
 void _jlt(); // jump less than
 void _jgt(); // jump greater than

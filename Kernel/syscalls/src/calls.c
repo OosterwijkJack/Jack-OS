@@ -52,8 +52,8 @@ int _read(){
             later I want to support multiple windows so the os also has to check the currently open program.  
         */
        char in;
-       while(in=getchar()){
-            if(in == '\n')
+       while((in=getchar()) != '\n' && in != EOF){
+            if(in == '\n' || bytes_read >= size)
                 break;
             // write input from user char by char
             ram[running_prgm->base+read_addr+bytes_read] = in;

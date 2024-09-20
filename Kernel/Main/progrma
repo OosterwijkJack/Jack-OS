@@ -1,8 +1,0 @@
-movd rsp,rsb
-sub 1,rsp
-movd STDIN,rek
-movb STDIN,rsp
-movd 1,r9
-compb 65,[rsp]
-jeq 7
-mov 100,r0

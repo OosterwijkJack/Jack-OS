@@ -3,14 +3,13 @@
 # In the future the assembler will be written in my assembly language then transformed 
 # into machine language that runs on my simulated cpu via this program. Then it will 
 # be able to run in my operating system’s environment 
-# cp /home/jack/Desktop/Jack-OS/CPU/assembler/jasm /home/jack/.local/bin
 
 import sys
 
 INSTRUCTION_BITS = 5
 ARG2_BITS = 5
-ARG1_BITS = 20
-ARG1_SIZE = 2**ARG1_BITS
+ARG1_BITS = 19
+ARG1_SIZE = (2**ARG1_BITS)-1
 
 func_table = {
     "add": 0,
@@ -23,8 +22,8 @@ func_table = {
     "or": 7,
     "xor": 8,
     "not": 9,
-    "compb": 10,
-    "compl": 11,
+    "compd": 10,
+    "compb": 11,
     "jeq": 12,
     "jlt": 13,
     "jgt": 14,
@@ -51,11 +50,12 @@ reg_names = {
     "rsp": 12,
     "rsb": 13,
     "rcf": 14,
-    "rfg": 15,
-    "ra1": 16,
-    "ra2": 17,
-    "rek": 18,
-    "rjo": 19,
+    "rfg1": 15,
+    "rfg2": 16,
+    "ra1": 17,
+    "ra2": 18,
+    "rek": 19,
+    "rjo": 20,
 }
 
 constants = {
@@ -147,10 +147,17 @@ def get_arg2_bits(text:str):
 
     if(comma != -1):
         arg2 = text[comma+1: len(text.rstrip())]
+        
+        if(arg2.startswith("[") and arg2.endswith("]")):
+            arg2 = arg2[1:-1]
+            out += "1"
+        else:
+            out += "0"
+
         out += str(bin(reg_names[arg2]))[2:].zfill(ARG2_BITS)
 
     else:
-        out += "0"*5
+        out += "0"*6
     return out
 
 def write_bits_out(bits):

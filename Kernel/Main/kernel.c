@@ -37,7 +37,7 @@ int main(void){
 
     regs[RSP] = running_prgm->size; // set stack pointer
 
-    for(int i = running_prgm->base+running_prgm->code_base; i < running_prgm->base+running_prgm->code_base+running_prgm->code_base; i+=4){
+    for(int i = running_prgm->base+running_prgm->code_base; i < running_prgm->base+running_prgm->code_base+running_prgm->code_base;){
         unsigned int opcode = 0; 
         for(int j = 0; j < 4; j++){
             opcode |= (ram[i + j] << ((j * 8)));
@@ -46,6 +46,7 @@ int main(void){
             break;
         
         execute_instruction(opcode);
+        i = regs[RPC] + running_prgm->base+running_prgm->code_base;
     }
     print_program(running_prgm);
     display_registers();

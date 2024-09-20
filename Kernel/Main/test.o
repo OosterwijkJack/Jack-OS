@@ -1,18 +1,35 @@
 // uses the read syscall
 
+start:
 movd rsp,rsb
+
 sub 1,rsp
+pushb 106
+sub 1,rsp
+pushb 97
+sub 1,rsp
+pushb 99
+sub 1,rsp
+pushb 107
+
+sub 4,rsp
 
 movd STDIN,rek
-movb STDIN,rsp
-movd 1,r9
+movd rsp,rjo
+movd 4,r9
+int 0
 
-movd [rsp],r1
-compb 65,r1
-jeq success
+movd rsp,r0
+sub 4,r0
 
-success:
-movd 100,r0
+compd [rsp],[r0]
+//jne start
+
+
+
+
+
+
 
 
 

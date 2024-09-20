@@ -12,11 +12,18 @@ int get_comp_flag(int out){
  
 }
 
-int get_num1(){
+int get_num1(bool is_dword){
     int num1;
     // if derefrence
-    if(regs[RFG1] == FLAG_ISADDR_REG1)
+    if(regs[RFG1] == FLAG_ISADDR_REG1){
         num1 = ram[running_prgm->base+regs[RA1]]; // pull value from memory register is pointing to
+        if(is_dword){
+            int address = running_prgm->base + regs[regs[RA1]];
+            for(int i = address; i < address+4;i++){
+                num1 |= (ram[i] << 8*(i-address));
+            }
+        }
+    }
     else
         num1 = regs[RA1]; // else pull value from register
     return num1;
@@ -35,6 +42,7 @@ void _movb() { // move byte
         regs[regs[RA2]] = regs[regs[RA1]]&0xff;
 }
 
+// fix this. cant move dword into memory can only read dword
 void _movd(){ // move dword (4 bytes)
     if(regs[RFG1] == FLAG_ISLITERAL)
         regs[regs[RA2]] = (regs[RA1]);
@@ -57,14 +65,14 @@ void _movd(){ // move dword (4 bytes)
 }
 
 void _add() { 
-    int num1 = get_num1();
+    int num1 = get_num1(false);
 
     regs[regs[RA2]] += num1; // add to value of register
 }
 
 void _mul(){
 
-    int num1 = get_num1();
+    int num1 = get_num1(false);
 
     regs[regs[RA2]] *= num1; // add to value of register
 }
@@ -72,66 +80,73 @@ void _mul(){
 
 void _sub(){
 
-    int num1 = get_num1();
+    int num1 = get_num1(false);
     
     regs[regs[RA2]] -= num1; // add to value of register
 }
 
 void _div(){
-    int num1 = get_num1();
+    int num1 = get_num1(false);
     regs[regs[RA2]] /= num1; // add to value of register
 }
 
 
 void _and() {
     
-    int num1 = get_num1();
+    int num1 = get_num1(false);
     regs[regs[RA2]] &= num1; // add to value of register
 }
 
 void _or() {
 
-    int num1 = get_num1();
+    int num1 = get_num1(false);
 
     regs[regs[RA2]] |= num1; // add to value of register
 }
 
 void _xor() {
 
-    int num1 = get_num1();
+    int num1 = get_num1(false);
 
     regs[regs[RA2]] ^= num1;
 }
 
 void _not() {
 
-    int num1 = get_num1();
+    int num1 = get_num1(false);
     regs[RA1] = ~num1;
 }
 
 void _cmpb() {
 
-    byte num1 = (byte)get_num1();
+    byte num1 = (byte)get_num1(false);
     byte num2;
 
     if(regs[RFG2] == FLAG_ISADDR_REG2)
-        num2 = ram[running_prgm->base+regs[RA2]];
+        num2 = ram[running_prgm->base+regs[regs[RA2]]];
     else
-        num2 = (byte)regs[RA2];
+        num2 = (byte)regs[regs[RA2]];
 
     // subtracts num2 from num1
+    printf("%i\n", num2);
     regs[RCF] = get_comp_flag(num1-num2);
 
 }
 
-void _cmpl() {
-    int num1 = (int)get_num1();
-    int num2;
+void _cmpd() {
+    int num1 = (int)get_num1(true);
+    int num2 = 0;
 
-    if(regs[RFG2] == FLAG_ISADDR_REG2)
+    if(regs[RFG2] == FLAG_ISADDR_REG2){
         num2 = ram[running_prgm->base+regs[RA2]];
+
+        int address = running_prgm->base + regs[regs[RA2]];
+        for(int i = address; i < address+4;i++){
+            num2 |= (ram[i] << 8*(i-address));
+        }
+    }
     else
-        num2 = (int)regs[RA2];
+        num2 = (int)regs[regs[RA2]];
 
     // subtracts num2 from num1
     regs[RCF] = get_comp_flag(num1-num2);
@@ -160,7 +175,7 @@ void _jgt() {
 void _jne() {
 
     if(regs[RCF] != FLAG_ZRO)
-        regs[RPC] = (regs[RA1]-1)*sizeof(int);
+        regs[RPC] = (regs[RA1])*sizeof(int);
 }
 
 void _jmp() {
@@ -193,7 +208,6 @@ void _pop(){ // pop from top of stack
 }
 
 void _int(){
-    write(STDOUT_FILENO, "int\n", 4);
 
     int rc = sysapi[regs[RA1]]();
 }
