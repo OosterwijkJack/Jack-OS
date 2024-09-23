@@ -20,7 +20,7 @@ int handle_syscall(int call){
     sysapi[call-1]();
 }
 
-int _read(){
+int _read(){ // FIXME 
     int read_addr = regs[REK]; // address to buffer/file being read (later might be a file descriptor)
     int write_address = regs[RJO]; // where to store what is being read (realitive to virtual address space and will be translated)
     int size = regs[R9]; // how much to read
@@ -52,22 +52,25 @@ int _read(){
             later I want to support multiple windows so the os also has to check the currently open program.  
         */
        char in;
-       while((in=getchar()) != '\n' && in != EOF){
-            if(in == '\n' || bytes_read >= size)
-                break;
-            // write input from user char by char
-            ram[running_prgm->base+read_addr+bytes_read] = in;
-            bytes_read++;
+       while (bytes_read < size) {
+        in = getchar();
+        if (in == '\n' || in == EOF)
+            break;
+    
+        // Write input from user char by char
+        ram[running_prgm->base + read_addr + bytes_read] = in;
+        bytes_read++;
        }
-    }
+}
+
     else{
         // handle file later may implement file descriptors 
     }
 
-    for(int i = 0; i < size; i ++){ // write stdin to write address
+    for(int i = 0; i < bytes_read; i ++){ // write stdin to write address
         ram[write_address+running_prgm->base+i] = ram[running_prgm->base+read_addr+i];
     }
-    ram[running_prgm->base+write_address+size] = 0; // terminating character
+    ram[running_prgm->base+write_address+bytes_read] = 0; // terminating character
     return bytes_read; 
 }
 

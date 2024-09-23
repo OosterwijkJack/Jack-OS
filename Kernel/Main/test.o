@@ -2,28 +2,10 @@
 
 start:
 movd rsp,rsb
-
-sub 1,rsp
-pushb 106
-sub 1,rsp
-pushb 97
-sub 1,rsp
-pushb 99
-sub 1,rsp
-pushb 107
-
 sub 4,rsp
+pushd 501
 
-movd STDIN,rek
-movd rsp,rjo
-movd 4,r9
-int 0
-
-movd rsp,r0
-sub 4,r0
-
-compd [rsp],[r0]
-//jne start
+cmpd 500,[rsp]
 
 
 

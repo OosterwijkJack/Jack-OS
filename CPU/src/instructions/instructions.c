@@ -13,15 +13,17 @@ int get_comp_flag(int out){
 }
 
 int get_num1(bool is_dword){
-    int num1;
+    int num1 = 0;
     // if derefrence
-    if(regs[RFG1] == FLAG_ISADDR_REG1){
-        num1 = ram[running_prgm->base+regs[RA1]]; // pull value from memory register is pointing to
+    if(regs[RFG1] == FLAG_ISADDR_REG1){ // pull value from memory register is pointing to
         if(is_dword){
-            int address = running_prgm->base + regs[regs[RA1]];
+            int address = running_prgm->base + regs[RA1];
             for(int i = address; i < address+4;i++){
                 num1 |= (ram[i] << 8*(i-address));
             }
+        }
+        else{
+            num1 = ram[running_prgm->base+regs[RA1]];
         }
     }
     else
@@ -137,12 +139,10 @@ void _cmpd() {
     int num1 = (int)get_num1(true);
     int num2 = 0;
 
-    if(regs[RFG2] == FLAG_ISADDR_REG2){
-        num2 = ram[running_prgm->base+regs[RA2]];
-
-        int address = running_prgm->base + regs[regs[RA2]];
+    if(regs[RFG2] == FLAG_ISADDR_REG2){ // if dereferenced
+        int address = running_prgm->base + regs[RA2];
         for(int i = address; i < address+4;i++){
-            num2 |= (ram[i] << 8*(i-address));
+            num2 |= (ram[i] << 8*(i-address)); // merge bytes
         }
     }
     else

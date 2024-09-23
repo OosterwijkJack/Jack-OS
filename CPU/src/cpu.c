@@ -76,7 +76,7 @@ void execute_instruction(unsigned int opCode){
     }
 
     if(arg2 != 0 ){
-        regs[RA2] = arg2-1;
+        regs[RA2] = regs[arg2-1];
 
         if(arg2_identifier)
             regs[RFG2] = FLAG_ISADDR_REG2;
