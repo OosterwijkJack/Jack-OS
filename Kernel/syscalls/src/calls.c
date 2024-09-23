@@ -51,26 +51,24 @@ int _read(){ // FIXME
 
             later I want to support multiple windows so the os also has to check the currently open program.  
         */
-       char in;
-       while (bytes_read < size) {
-        in = getchar();
-        if (in == '\n' || in == EOF)
-            break;
+        char in;
+        while (bytes_read < size) {
+            in = getchar();
+            if (in == '\n' || in == EOF)
+                break;
     
-        // Write input from user char by char
-        ram[running_prgm->base + read_addr + bytes_read] = in;
-        bytes_read++;
-       }
-}
+            // Write input from user char by char to stdin 
+            ram[running_prgm->base+write_address+ (size - bytes_read - 1)] = in;
+            bytes_read++;
+        }
+        ram[running_prgm->base + write_address + (size - bytes_read- 1)] = 0;
 
+    }
+    
     else{
         // handle file later may implement file descriptors 
     }
 
-    for(int i = 0; i < bytes_read; i ++){ // write stdin to write address
-        ram[write_address+running_prgm->base+i] = ram[running_prgm->base+read_addr+i];
-    }
-    ram[running_prgm->base+write_address+bytes_read] = 0; // terminating character
     return bytes_read; 
 }
 

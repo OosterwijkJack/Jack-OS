@@ -61,6 +61,7 @@ void execute_instruction(unsigned int opCode){
         return;
     }
 
+    // arg1 is always just a value
     if(arg1_identifier == FLAG_ISREG || arg1_identifier == FLAG_ISADDR_REG1 ){
         regs[RA1] = regs[arg1-1]; // instruction 0 = null so decrement by one (1 = R0) in context of instructions
         regs[RFG1] = arg1_identifier;
@@ -74,9 +75,9 @@ void execute_instruction(unsigned int opCode){
         printf("Invalid register by arg 2\n");
         return;
     }
-
+    // arg2 is usally a register being assigned a value but not always
     if(arg2 != 0 ){
-        regs[RA2] = regs[arg2-1];
+        regs[RA2] = arg2-1;
 
         if(arg2_identifier)
             regs[RFG2] = FLAG_ISADDR_REG2;

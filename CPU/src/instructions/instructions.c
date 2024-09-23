@@ -116,7 +116,7 @@ void _xor() {
 void _not() {
 
     int num1 = get_num1(false);
-    regs[RA1] = ~num1;
+    regs[regs[RA1]] = ~num1;
 }
 
 void _cmpb() {
@@ -140,7 +140,7 @@ void _cmpd() {
     int num2 = 0;
 
     if(regs[RFG2] == FLAG_ISADDR_REG2){ // if dereferenced
-        int address = running_prgm->base + regs[RA2];
+        int address = running_prgm->base + regs[regs[RA2]];
         for(int i = address; i < address+4;i++){
             num2 |= (ram[i] << 8*(i-address)); // merge bytes
         }
@@ -149,6 +149,7 @@ void _cmpd() {
         num2 = (int)regs[regs[RA2]];
 
     // subtracts num2 from num1
+    printf("num1: %i\nnum2: %i\n", num1,num2);
     regs[RCF] = get_comp_flag(num1-num2);
 }
 

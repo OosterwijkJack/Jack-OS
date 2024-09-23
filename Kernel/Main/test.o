@@ -2,10 +2,29 @@
 
 start:
 movd rsp,rsb
-sub 4,rsp
-pushd 501
 
-cmpd 500,[rsp]
+pushb 106 // j
+sub 1,rsp
+pushb 97 // a
+sub 1,rsp
+pushb 99 // c
+sub 1,rsp
+pushb 107 // k
+
+movd rsp,r0 // save stack pointer
+
+sub 1,rsp
+pushb 0
+
+ //get user input
+sub 5,rsp
+movd STDIN,rek
+movd rsp,rjo
+movd 4,r9
+int 0
+
+cmpd [r0],[rsp]
+
 
 
 
