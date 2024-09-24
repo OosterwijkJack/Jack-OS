@@ -48,7 +48,7 @@ int main(void){
         execute_instruction(opcode);
         i = regs[RPC] + running_prgm->base+running_prgm->code_base;
     }
-    print_program(running_prgm);
-    display_registers();
+    //print_program(running_prgm);
+    //display_registers();
 
 }   

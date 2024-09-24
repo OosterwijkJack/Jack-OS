@@ -8,18 +8,21 @@ movd rsp,rsb
 sub 5,rsp
 movd STDIN,rek
 movd rsp,rjo
-movd 4,r9
+movd 5,r9
 int 0 // read
 
-sub 1,rsp
-pushb 12
+add 1,rsp // replace endline with new line
+pushb 10
+sub 1,rsp // add endline back
+pushb 0
+sub 1,rsp // increase size
 
 movd rsp,rek
 movd 3000,rjo
-movd 5,r9
+movd 6,r9
 int 1 // write
 
 movd 3000,rek
 movd STDOUT,rjo
-movd 5,r9
+movd 6,r9
 int 1

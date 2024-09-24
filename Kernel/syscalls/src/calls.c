@@ -59,20 +59,23 @@ int _read(){ // FIXME
             later I want to support multiple windows so the os also has to check the currently open program.  
         */
         char in;
-        while (bytes_read < size) {
+        while (bytes_read < (size-1)) {
             in = getchar();
             if (in == '\n' || in == EOF)
                 break;
     
             // Write input from user char by char to stdin 
-            if(write_address <= regs[RSP])
+            if(write_address < regs[RSP])
                 ram[physical_write_addr+ bytes_read] = in; // heap grows down
             else
-                ram[physical_write_addr - (size - bytes_read - 1)] = in; // stack grows up
+                ram[physical_write_addr + ((running_prgm->size - regs[RSP]) - bytes_read)] = in; // stack grows up
                 
             bytes_read++;
         }
-        ram[physical_write_addr + (size - bytes_read- 1)] = 0;
+        if(write_address < regs[RSP])
+            ram[physical_write_addr + bytes_read] = 0;
+        else
+            ram[physical_write_addr + ((running_prgm->size - regs[RSP]) - bytes_read)] = 0;
 
     }
     
@@ -98,7 +101,11 @@ int _write(){
 
     int to_write = 0;
     for(int i = 0; i < write_size; i++){
-        to_write = ram[physical_read_addr + (write_size - bytes_written - 1)];
+        // the way information is written or read depends on if it is the stack or the heap because they grow in opposite directions
+        if(read_addr < regs[RSP])
+            to_write = ram[physical_read_addr + bytes_written];
+        else
+            to_write = ram[physical_read_addr + ((write_size) - bytes_written)];
 
         if(to_write == 0) // handle terminating character
             break;
@@ -106,11 +113,13 @@ int _write(){
         if(write_addr == running_prgm->stdout_base)
             printf("%c", to_write); // display contents from memory to screen if STDOUD is write address
         else{ // write to memory
-            if(write_addr >= regs[RSP]){ // if more than stack it is heap
-                ram[physical_read_addr - (write_size - bytes_written - 1)] = to_write;
+            if(write_addr < regs[RSP]){ // if more than stack it is heap
+                ram[physical_write_addr + bytes_written] = to_write;
+
+                running_prgm->heap_size++; // increment heap size
             }
             else{
-                ram[physical_write_addr + (write_size - bytes_written - 1)] = to_write; // stack
+                ram[physical_write_addr + ((running_prgm->size - regs[RSP]) - bytes_written )] = to_write; // stack
             }
             
         }
