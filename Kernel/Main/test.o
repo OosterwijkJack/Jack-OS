@@ -3,29 +3,26 @@
 start:
 movd rsp,rsb
 
-pushb 106 // j
-sub 1,rsp
-pushb 97 // a
-sub 1,rsp
-pushb 99 // c
-sub 1,rsp
-pushb 107 // k
-
-movd rsp,r0 // save stack pointer
-
-sub 1,rsp
-pushb 0
 
  //get user input
 sub 5,rsp
 movd STDIN,rek
 movd rsp,rjo
 movd 4,r9
-int 0
+int 0 // read
 
-cmpd [r0],[rsp]
+sub 1,rsp
+pushb 12
 
+movd rsp,rek
+movd 1573,rjo
+movd 5,r9
+int 1 // write
 
+//movd 1573,rek
+//movd STDOUT,rjo
+//movd 5,r9
+//int 1
 
 
 

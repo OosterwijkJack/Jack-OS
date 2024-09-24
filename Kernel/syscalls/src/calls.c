@@ -14,6 +14,13 @@ int (*sysapi[CALL_COUNT])(void) = {
 
 };
 
+bool valid_address(int address, int size){
+    if(address == 0 || address+size > running_prgm->size){ // check valid write addr
+        return false; 
+    }
+    return true;
+}
+
 int handle_syscall(int call){
     if(call <= 0 || call > CALL_COUNT)
         return 0;
@@ -31,7 +38,7 @@ int _read(){ // FIXME
         return -1; 
     }
 
-    if(write_address == 0 || write_address <= running_prgm->code_base || write_address+size > running_prgm->size){ // check valid write addr
+    if(!valid_address(write_address, size)){ // check valid write addr
         return -1; 
     }
 
@@ -73,7 +80,33 @@ int _read(){ // FIXME
 }
 
 int _write(){
+    int read_addr = regs[REK];
+    int write_addr = regs[RJO];
+    int write_size = regs[R9];
 
+    int bytes_written = 0;
+
+    if(!valid_address(write_addr, write_size) || read_addr == 0 || write_size == 0) // checck inputs are valid
+        return -1;
+    
+    int physical_read_addr = running_prgm->base + read_addr;
+    int physical_write_addr = running_prgm->base + write_addr;
+
+    int to_write = 0;
+    for(int i = 0; i < write_size; i++){
+        to_write = ram[physical_read_addr + (write_size - bytes_written - 1)];
+
+        if(to_write == 0) // handle terminating character
+            break;
+
+        if(write_addr == running_prgm->stdout_base)
+            printf("%c", to_write); // display contents from memory to screen if STDOUD is write address
+        else
+            ram[physical_write_addr + (write_size - bytes_written - 1)] = to_write; // else just write to memory
+        
+        bytes_written++;
+        
+    }
 }
 
 int _open(){

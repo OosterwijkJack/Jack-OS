@@ -59,7 +59,8 @@ reg_names = {
 }
 
 constants = {
-    "STDIN": 1
+    "STDIN": 1,
+    "STDOUT": 513
 }
 
 label_dict = {}
