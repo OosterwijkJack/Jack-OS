@@ -15,19 +15,11 @@ sub 1,rsp
 pushb 12
 
 movd rsp,rek
-movd 1573,rjo
+movd 3000,rjo
 movd 5,r9
 int 1 // write
 
-//movd 1573,rek
-//movd STDOUT,rjo
-//movd 5,r9
-//int 1
-
-
-
-
-
-
-
-
+movd 3000,rek
+movd STDOUT,rjo
+movd 5,r9
+int 1

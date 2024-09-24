@@ -65,10 +65,14 @@ int _read(){ // FIXME
                 break;
     
             // Write input from user char by char to stdin 
-            ram[running_prgm->base+write_address+ (size - bytes_read - 1)] = in;
+            if(write_address <= regs[RSP])
+                ram[physical_write_addr+ bytes_read] = in; // heap grows down
+            else
+                ram[physical_write_addr - (size - bytes_read - 1)] = in; // stack grows up
+                
             bytes_read++;
         }
-        ram[running_prgm->base + write_address + (size - bytes_read- 1)] = 0;
+        ram[physical_write_addr + (size - bytes_read- 1)] = 0;
 
     }
     
@@ -101,8 +105,15 @@ int _write(){
 
         if(write_addr == running_prgm->stdout_base)
             printf("%c", to_write); // display contents from memory to screen if STDOUD is write address
-        else
-            ram[physical_write_addr + (write_size - bytes_written - 1)] = to_write; // else just write to memory
+        else{ // write to memory
+            if(write_addr >= regs[RSP]){ // if more than stack it is heap
+                ram[physical_read_addr - (write_size - bytes_written - 1)] = to_write;
+            }
+            else{
+                ram[physical_write_addr + (write_size - bytes_written - 1)] = to_write; // stack
+            }
+            
+        }
         
         bytes_written++;
         
