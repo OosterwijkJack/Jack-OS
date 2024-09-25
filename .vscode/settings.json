@@ -8,6 +8,7 @@
         "schedule.h": "c",
         "global.h": "c",
         "cpu.h": "c",
-        "instructions.h": "c"
+        "instructions.h": "c",
+        "kernel.h": "c"
     }
 }

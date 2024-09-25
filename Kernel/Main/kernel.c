@@ -35,9 +35,9 @@ int main(void){
 
     schedule_init();
 
-    regs[RSP] = running_prgm->size; // set stack pointer
+    int i = running_prgm->base + running_prgm->code_base;
 
-    for(int i = running_prgm->base+running_prgm->code_base; i < running_prgm->base+running_prgm->code_base+running_prgm->code_base;){
+    while(i >= running_prgm->code_base && i <= running_prgm->code_base+running_prgm->code_size){
         unsigned int opcode = 0; 
         for(int j = 0; j < 4; j++){
             opcode |= (ram[i + j] << ((j * 8)));
@@ -47,8 +47,18 @@ int main(void){
         
         execute_instruction(opcode);
         i = regs[RPC] + running_prgm->base+running_prgm->code_base;
+        running_prgm->instructions_executed++;
+
+        if(running_prgm->instructions_executed >= 20){
+            prgm * new_program;
+            if(running_prgm->pid == 1)
+                new_program = get_program(2, prgm_list);
+            else
+                new_program = get_program(1,prgm_list);
+
+            switch_program(new_program);
+        }
     }
     //print_program(running_prgm);
     //display_registers();
-
 }   

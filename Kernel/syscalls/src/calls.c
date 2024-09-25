@@ -10,6 +10,7 @@ int (*sysapi[CALL_COUNT])(void) = {
     _close,
     _kill,
     _sleep,
+    _exit,
     _set_window
 
 };
@@ -146,5 +147,9 @@ int _sleep(){
 }
 
 int _set_window(){
+
+}
+
+int _exit(){
 
 }

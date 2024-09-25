@@ -250,6 +250,11 @@ int program_list_prepend(int base, int size, int* pid, prgm **w_prgm_list){
 
     tmp->waiting_for_io = false;
 
+    for(int i = 0 ; i < REGISTER_COUNT; i ++){ // set registers to zero
+        tmp->save_regs[i] = 0;
+    }
+
+    tmp->instructions_executed = 0;
     
     // assign new pid if pid is NULL
     if(pid != NULL)

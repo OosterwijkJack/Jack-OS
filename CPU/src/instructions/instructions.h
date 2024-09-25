@@ -2,7 +2,6 @@
 #include <unistd.h>
 #include "cpu.h"
 #include "calls.h"
-#include "memory.h"
 
 // -----instructions-----
 void _add();
