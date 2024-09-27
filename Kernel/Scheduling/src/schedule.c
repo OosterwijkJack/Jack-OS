@@ -20,8 +20,6 @@ int switch_program(prgm *new_prgm){ // schedule new program
     if(regs[RSP] == 0) // set stack pointer for new programs
         regs[RSP] = new_prgm->size;
 
-    new_prgm->instructions_executed = 0; // reset # of instructions executed
-
     running_prgm = new_prgm;
     return new_prgm->pid;
 }

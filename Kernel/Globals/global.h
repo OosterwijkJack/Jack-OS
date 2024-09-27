@@ -38,7 +38,6 @@ typedef struct prgm {
     int stack_size;
     bool waiting_for_io;
     int save_regs[REGISTER_COUNT];
-    int instructions_executed; // number of instructions executed from the last context switch.
     struct prgm *next;
     struct prgm *prev;
 } prgm;

@@ -1,1 +1,6 @@
-dont know yet
+A lottery ticket scheduler
+
+Each program is able to decide its own priority anywhere in the code
+A program can choose to be either LOW,MEDIUM, or HIGH priority.
+The os will then have a set amount of tickets say 1000 and share them with the
+programs based off of the priority. A lotter will then be held for who gets to run next (say every 50 instructions executed)

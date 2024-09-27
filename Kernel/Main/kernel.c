@@ -1,5 +1,6 @@
 #include "kernel.h"
 
+
 void print_program(prgm *program){
     printf("PID: %i\n", program->pid);
     printf("Base: %i\n", program->base);
@@ -19,7 +20,6 @@ void print_program(prgm *program){
 
 int main(void){
     init_memory();
-
     FILE * file1 = fopen("program", "r");
     FILE * file2 = fopen("program2", "r");
 
@@ -31,40 +31,13 @@ int main(void){
     int p2 = allocate_program(10000, NULL, file2, &free_list, &prgm_list);
     int p1 = allocate_program(10000, NULL, file1, &free_list, &prgm_list);
 
-    if(p1 == 0){
+    if(p1 == 0 || p2 == 0){
         puts("Allocation failed\n");
         exit(1);
     }
 
     schedule_init();
 
-    PLE = running_prgm->base + running_prgm->code_base; // physical line of execution
-
-    while(PLE >= running_prgm->base+running_prgm->code_base  && PLE <= running_prgm->base + running_prgm->code_base+running_prgm->code_size){
-        unsigned int opcode = 0; 
-        for(int j = 0; j < 4; j++){
-            opcode |= (ram[PLE + j] << ((j * 8)));
-        }
-        if(opcode == 0)
-            break;
-        
-        execute_instruction(opcode);
-        PLE = regs[RPC] + running_prgm->base+running_prgm->code_base;
-        running_prgm->instructions_executed++;
-        
-        // every 20 lines of execution swap program (round robbin)
-        if(running_prgm->instructions_executed >= 20){
-            prgm * new_program;
-            if(running_prgm->pid == p1)
-                new_program = get_program(p2, prgm_list);
-            else
-                new_program = get_program(p1,prgm_list);
-
-            switch_program(new_program);
-            PLE = regs[RPC] + running_prgm->base+running_prgm->code_base;
-        }
-        
-    }
 
     printf("Prgm 1: \n");
     switch_program(get_program(p1, prgm_list));
@@ -74,3 +47,25 @@ int main(void){
     display_registers();
 
 }   
+
+void execution_loop(){ // forever loop deals with executing active programs and context switching
+
+    PLE = running_prgm->base + running_prgm->code_base; // physical line of execution
+    clock_t tick = clock(); // time track for context switching
+    double time_spent;
+
+    while(true){
+        unsigned int opcode = 0; 
+        for(int j = 0; j < 4; j++){
+            opcode |= (ram[PLE + j] << ((j * 8)));
+        }
+        if(opcode == 0)
+            break;
+        
+        execute_instruction(opcode);
+        PLE = regs[RPC] + running_prgm->base+running_prgm->code_base;
+
+        clock_t tock = clock();
+        time_spent = (double)(tock - tick) / CLOCKS_PER_SEC;
+    }
+}
