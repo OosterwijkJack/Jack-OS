@@ -130,7 +130,6 @@ void _cmpb() {
         num2 = (byte)regs[regs[RA2]];
 
     // subtracts num2 from num1
-    printf("%i\n", num2);
     regs[RCF] = get_comp_flag(num1-num2);
 
 }
@@ -149,7 +148,6 @@ void _cmpd() {
         num2 = (int)regs[regs[RA2]];
 
     // subtracts num2 from num1
-    printf("num1: %i\nnum2: %i\n", num1,num2);
     regs[RCF] = get_comp_flag(num1-num2);
 }
 

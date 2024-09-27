@@ -1,4 +1,8 @@
 #pragma once
+
+// causes dependency errors when not declared before includes
+#define REGISTER_COUNT 20
+
 #include <stdlib.h>
 #include <unistd.h>
 #include <stdio.h>
@@ -10,10 +14,8 @@
 typedef char byte;
 
 #define INT_S 32
-#define REGISTER_COUNT 20
 #define INSTRUCTION_COUNT 21
 #define INSTRUCTION_SIZE 33 // + 1 for newline
-#define PGM_SIZE 1024
 
 extern int regs[REGISTER_COUNT];
 

@@ -1,12 +1,11 @@
-#pragma once
+
 #include "schedule.h"
 
 prgm * running_prgm = NULL;
 
 void schedule_init(){
-    regs[RSP] = running_prgm->size; // set stack pointer
     running_prgm = prgm_list;
-
+    regs[RSP] = running_prgm->size; // set stack pointer
 }
 
 int switch_program(prgm *new_prgm){ // schedule new program

@@ -69,10 +69,11 @@ int allocate_program(int size, int* pid, FILE* prgmCode, free_list_t **w_free_li
     // prepend program list
     program_list_prepend(best->base, size, pid, w_prgm_list);
 
-    // Write program code into memory block
+    // Write program code into memory block at base + code_base
     int code_size = 0;
     if(prgmCode != NULL)
-        code_size = write_memory((*w_prgm_list)->code_base, size-1,prgmCode);
+    // (base, max, program code)
+        code_size = write_memory((*w_prgm_list)->base + (*w_prgm_list)->code_base, (*w_prgm_list)->base + size-1,prgmCode); 
     
     if(code_size == 0){
         // make sure there is code

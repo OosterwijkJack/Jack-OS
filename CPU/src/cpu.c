@@ -2,7 +2,6 @@
 
 // initializ registers to zero
 int regs[REGISTER_COUNT] = {0};
-char program_memory[PGM_SIZE] = {0};
 
 // instructions can easily be indexed based on opcode
 void(*Instructions[INSTRUCTION_COUNT])(void) = {
@@ -34,7 +33,6 @@ void display_registers(){
     for(int i = 0; i < REGISTER_COUNT; i++){
         printf("%i: %i\n",i, regs[i]);
     }
-    exit(0);
 }
 
 

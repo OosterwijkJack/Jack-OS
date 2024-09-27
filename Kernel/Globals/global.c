@@ -6,6 +6,8 @@ free_list_t *free_list = NULL;
 prgm *swp_prgm_list = NULL;
 free_list_t *swp_free_list = NULL;
 
+int PLE = 0;
+
 
 void split_bytes(void *v_bytes_in, size_t n_bytes, char bytes_out[]){
 

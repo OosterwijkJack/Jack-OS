@@ -1,6 +1,4 @@
-#ifndef MEMORY_MANAGEMENT_H
-#define MEMORY_MANAGEMENT_H
-
+#pragma once
 #include <stdlib.h>
 #include <stdbool.h>
 #include <stdio.h>
@@ -36,4 +34,3 @@ int write_memory(int base, int max, FILE* mem);
 prgm * get_program(int pid, prgm * w_prgm_list);
 void print_memory();
 
-#endif /* MEMORY_MANAGEMENT_H */

@@ -4,10 +4,6 @@
 typedef struct prgm prgm;
 typedef struct free_list_t free_list_t;
 
-#include <stdlib.h>
-#include <stdbool.h>
-#include <cpu.h>
-
 // [MEMORY AND PROGRAM RELATED GLOBALS]
 
 // definitions
@@ -17,6 +13,13 @@ typedef struct free_list_t free_list_t;
 
 #define RAM_SIZE 20000000 // 20mb
 #define SWP_SIZE 30000000 // 30mb
+
+extern int PLE; // Physical line of execution. (Keeps track of what data inside ram will be sent to CPU)
+
+#include <stdlib.h>
+#include <stdbool.h>
+#include <cpu.h>
+
 
 // types
 // doubly linked lists

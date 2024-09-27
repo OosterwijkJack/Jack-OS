@@ -1,28 +1,9 @@
 // uses the read syscall
 
-start:
 movd rsp,rsb
+start:
+add 1,r0
+cmpd 50000,r0
+jne start
 
 
- //get user input
-sub 5,rsp
-movd STDIN,rek
-movd rsp,rjo
-movd 5,r9
-int 0 // read
-
-add 1,rsp // replace endline with new line
-pushb 10
-sub 1,rsp // add endline back
-pushb 0
-sub 1,rsp // increase size
-
-movd rsp,rek
-movd 3000,rjo
-movd 6,r9
-int 1 // write
-
-movd 3000,rek
-movd STDOUT,rjo
-movd 6,r9
-int 1
