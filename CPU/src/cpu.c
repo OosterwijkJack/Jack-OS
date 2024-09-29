@@ -38,6 +38,7 @@ void display_registers(){
 
 void execute_instruction(unsigned int opCode){
     // reset argument registers
+    double time_spent;
     regs[RA1] = 0;
     regs[RA2] = 0;
 
@@ -87,6 +88,7 @@ void execute_instruction(unsigned int opCode){
 
     regs[RPC] += 4; // increment program counter
     Instructions[instructionType](); // execute instruction
+
 }
 
 

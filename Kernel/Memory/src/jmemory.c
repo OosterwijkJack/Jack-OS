@@ -249,7 +249,9 @@ int program_list_prepend(int base, int size, int* pid, prgm **w_prgm_list){
 
     tmp->stack_size = 0;
 
-    tmp->waiting_for_io = false;
+    tmp->state = STATE_READY;
+    tmp->ticket = -1;
+    tmp->priority = 1;
 
     for(int i = 0 ; i < REGISTER_COUNT; i ++){ // set registers to zero
         tmp->save_regs[i] = 0;

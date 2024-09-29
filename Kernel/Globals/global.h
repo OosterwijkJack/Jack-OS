@@ -20,6 +20,10 @@ extern int PLE; // Physical line of execution. (Keeps track of what data inside 
 #include <stdbool.h>
 #include <cpu.h>
 
+#define STATE_RUNNING 0 // program is running
+#define STATE_READY 1 // program is ready to run
+#define STATE_PAUSED 2 // program is paused (likely for io)
+
 
 // types
 // doubly linked lists
@@ -36,10 +40,13 @@ typedef struct prgm {
     int heap_base; // where is heap
     int heap_size;
     int stack_size;
-    bool waiting_for_io;
     int save_regs[REGISTER_COUNT];
     struct prgm *next;
     struct prgm *prev;
+
+    int state; // for scheduler
+    int ticket; // for lottery
+    int priority;
 } prgm;
 
 typedef struct free_list_t {

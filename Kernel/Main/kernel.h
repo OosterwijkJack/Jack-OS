@@ -5,6 +5,6 @@
 #include "calls.h"
 #include "cpu.h"
 
-#define TIME_SLICE 0.005 // 5 ms
+#define TIME_SLICE 1// 5 ms
 
 void execution_loop();

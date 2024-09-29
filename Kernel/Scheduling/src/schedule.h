@@ -1,6 +1,12 @@
 #pragma once
 
 #include "global.h"
+#include "stdlib.h"
+#include <time.h>
+
+#define P_LOW 100
+#define P_MED 300
+#define P_HIGH 1000
 
 void schedule_init();
 
@@ -10,4 +16,4 @@ int change_prgm_state(int state); // change between state: paused, ready, runnin
 
 int assign_tickets(); // assign tickets for lottery draw through priority and randomness
 
-prgm *draw_lotter(); // returns winning program
+int draw_lottery(); // returns winning program

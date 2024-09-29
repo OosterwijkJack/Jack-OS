@@ -37,35 +37,47 @@ int main(void){
     }
 
     schedule_init();
+    draw_lottery();
 
-
-    printf("Prgm 1: \n");
-    switch_program(get_program(p1, prgm_list));
-    display_registers();
-    printf("Prgm 2: \n");
-    switch_program(get_program(p2, prgm_list));
-    display_registers();
+    execution_loop();
 
 }   
 
 void execution_loop(){ // forever loop deals with executing active programs and context switching
 
     PLE = running_prgm->base + running_prgm->code_base; // physical line of execution
-    clock_t tick = clock(); // time track for context switching
     double time_spent;
+    clock_t tick = clock(); // time track for context switching
+    clock_t tock;
+    int ticks = 0;
 
     while(true){
         unsigned int opcode = 0; 
         for(int j = 0; j < 4; j++){
             opcode |= (ram[PLE + j] << ((j * 8)));
         }
-        if(opcode == 0)
-            break;
+
+        if(opcode == 0){
+            display_registers();
+            program_list_delete(running_prgm, &prgm_list); // delete finished program 
+
+            if(prgm_list == NULL){ // if no more programs exit
+                tock = clock();
+                time_spent = (double)(tock-tick) / CLOCKS_PER_SEC;
+                printf("%f\n", time_spent);
+                exit(0);
+            }
+
+            draw_lottery();
+            tick = clock();
+
+            PLE = regs[RPC] + running_prgm->base+running_prgm->code_base;
+
+            continue;
+        }
+
         
         execute_instruction(opcode);
         PLE = regs[RPC] + running_prgm->base+running_prgm->code_base;
-
-        clock_t tock = clock();
-        time_spent = (double)(tock - tick) / CLOCKS_PER_SEC;
     }
 }

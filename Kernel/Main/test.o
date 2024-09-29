@@ -3,7 +3,5 @@
 movd rsp,rsb
 start:
 add 1,r0
-cmpd 50000,r0
+cmpd 51000,r0
 jne start
-
-
