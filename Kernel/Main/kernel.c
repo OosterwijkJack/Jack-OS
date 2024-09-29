@@ -1,24 +1,21 @@
 #include "kernel.h"
 
+double time_since;
+bool time_thread_run;
 
-void print_program(prgm *program){
-    printf("PID: %i\n", program->pid);
-    printf("Base: %i\n", program->base);
-    printf("stdin base: %i\n", program->stdin_base);
-    printf("stdin bound: %i\n", program->stdin_base + STDIN_SIZE);
-    printf("stdout base: %i\n", program->stdout_base);
-    printf("stdout bound: %i\n", program->stdout_base + STDOUT_SIZE);
-    printf("screen base: %i\n", program->screen_base);
-    printf("screen bound: %i\n", program->screen_base+program->screen_size);
-    printf("code base: %i\n", program->code_base);
-    printf("code bound: %i\n", program->code_base + program->code_size);
-    printf("heap base: %i\n", program->heap_base);
-    printf("heap bound: %i\n", program->heap_base + program->heap_size);
-    printf("stack base: %i\n", program->size);
-    printf("stack bound: %i\n", program->size-program->stack_size);
+void *time_thread(){
+    time_t tock = clock();
+    while(time_thread_run){
+        time_since = (double)(tock-clock()) / CLOCKS_PER_SEC;
+    }
+}
+
+void schedule_time_thread(){
+
 }
 
 int main(void){
+
     init_memory();
     FILE * file1 = fopen("program", "r");
     FILE * file2 = fopen("program2", "r");
@@ -65,6 +62,7 @@ void execution_loop(){ // forever loop deals with executing active programs and 
                 tock = clock();
                 time_spent = (double)(tock-tick) / CLOCKS_PER_SEC;
                 printf("%f\n", time_spent);
+                time_thread_run = false;
                 exit(0);
             }
 
