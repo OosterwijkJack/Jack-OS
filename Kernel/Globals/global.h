@@ -1,5 +1,4 @@
-#ifndef MEMORY_PROGRAM_GLOBALS_H
-#define MEMORY_PROGRAM_GLOBALS_H
+#pragma once
 
 typedef struct prgm prgm;
 typedef struct free_list_t free_list_t;
@@ -68,4 +67,3 @@ void merge_bytes(char *bytes_in, size_t n_bytes, unsigned int *out);
 
 extern prgm *running_prgm;
 
-#endif /* MEMORY_PROGRAM_GLOBALS_H */

@@ -1,20 +1,6 @@
 #include "kernel.h"
 
-double time_since;
-bool time_thread_run;
-
-void *time_thread(){
-    time_t tock = clock();
-    while(time_thread_run){
-        time_since = (double)(tock-clock()) / CLOCKS_PER_SEC;
-    }
-}
-
-void schedule_time_thread(){
-
-}
-
-int main(void){
+int main(void){ // init everything
 
     init_memory();
     FILE * file1 = fopen("program", "r");
@@ -33,22 +19,24 @@ int main(void){
         exit(1);
     }
 
+    threads_init(); // must init threads first because draw lottery needs
+
     schedule_init();
-    draw_lottery();
+    draw_lottery(); // assign program
 
-    execution_loop();
+    start_time_thread(); 
+    start_execution_thread(); // forever loop that executes active programs
 
+    while(1){
+        usleep(1000);
+    }
 }   
 
-void execution_loop(){ // forever loop deals with executing active programs and context switching
+void *execution_loop(){ // forever loop deals with executing active programs and context switching
 
     PLE = running_prgm->base + running_prgm->code_base; // physical line of execution
-    double time_spent;
-    clock_t tick = clock(); // time track for context switching
-    clock_t tock;
-    int ticks = 0;
 
-    while(true){
+    while(execution_thread->running){
         unsigned int opcode = 0; 
         for(int j = 0; j < 4; j++){
             opcode |= (ram[PLE + j] << ((j * 8)));
@@ -58,24 +46,26 @@ void execution_loop(){ // forever loop deals with executing active programs and 
             display_registers();
             program_list_delete(running_prgm, &prgm_list); // delete finished program 
 
-            if(prgm_list == NULL){ // if no more programs exit
-                tock = clock();
-                time_spent = (double)(tock-tick) / CLOCKS_PER_SEC;
-                printf("%f\n", time_spent);
-                time_thread_run = false;
-                exit(0);
+            while(prgm_list == NULL){ // if no more programs exit
+                usleep(1000); // wait until there is a program to execute
             }
 
             draw_lottery();
-            tick = clock();
 
             PLE = regs[RPC] + running_prgm->base+running_prgm->code_base;
-
             continue;
         }
 
-        
         execute_instruction(opcode);
+
+        if(time_thread->time_since >= TIME_SLICE){
+            draw_lottery();
+        }
+
         PLE = regs[RPC] + running_prgm->base+running_prgm->code_base;
     }
+}
+
+void shutdown(){
+    kill_threads();
 }

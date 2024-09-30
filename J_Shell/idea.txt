@@ -1,0 +1,30 @@
+shell to interact with the os
+
+list of commands (names are not very original):
+
+jano {file} - nano but made by jack
+
+jexe {file} - jack execute (execute program)
+
+ls - list dir contents
+
+shutdown - shutdown operating system and exit
+
+cd {path} - change jack directory
+
+kill {pid} - kills process
+
+rm {file/dir} - rm a file or dir
+
+mkdir - make directory
+
+ps - show all running processes
+flags:
+-m show physical memory occupied by each process
+
+clear - clear console
+
+cat {file} - display contents of file
+
+
+

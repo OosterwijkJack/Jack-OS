@@ -5,8 +5,9 @@
 #include "schedule.h"
 #include "calls.h"
 #include "cpu.h"
+#include "j_threads.h"
 
-#define TIME_SLICE 1// 5 ms
+#define TIME_SLICE 0.1// 100 ms
 
-void execution_loop();
-void *time_thread();
+void *execution_loop();
+void shutdown();

@@ -10,7 +10,8 @@
                 "${workspaceFolder}/Kernel/Scheduling",
                 "${workspaceFolder}/Kernel/Globals",
                 "${workspaceFolder}/Kernel/syscalls",
-                "/usr/include"
+                "/usr/include",
+                "${workspaceFolder}/Kernel/Main"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/gcc",

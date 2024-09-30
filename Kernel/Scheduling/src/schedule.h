@@ -1,7 +1,8 @@
 #pragma once
 
 #include "global.h"
-#include "stdlib.h"
+#include "j_threads.h"
+#include <stdlib.h>
 #include <time.h>
 
 #define P_LOW 100
