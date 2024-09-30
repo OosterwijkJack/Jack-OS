@@ -6,6 +6,7 @@
 #include "calls.h"
 #include "cpu.h"
 #include "j_threads.h"
+#include "j_shell.h"
 
 #define TIME_SLICE 0.1// 100 ms
 

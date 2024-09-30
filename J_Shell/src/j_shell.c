@@ -1,4 +1,4 @@
-#include "J_Shell.h"
+#include "j_shell.h"
 
 void split_command(char cmd[MAX_CMD_SIZE], char out[2][MAX_CMD_SIZE]){
     char *token;
@@ -23,7 +23,10 @@ void input_loop(){
             printf("Command exceeds max\n");
             continue;
         }
+        char command[2][MAX_CMD_SIZE];
+        split_command(buf, command); // seperate lines
 
+        printf("%s\n%s\n", command[0],command[1]);
 
     }
 }

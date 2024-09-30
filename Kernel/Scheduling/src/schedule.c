@@ -6,7 +6,9 @@ int ticket_count = 0;
 void schedule_init(){
     srand(time(NULL)); // set rand seed
     running_prgm = prgm_list;
-    regs[RSP] = running_prgm->size; // set stack pointer
+
+    if(running_prgm != NULL)
+        regs[RSP] = running_prgm->size; // set stack pointer
 }
 
 int draw_lottery(){
