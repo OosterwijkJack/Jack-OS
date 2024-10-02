@@ -1,10 +1,15 @@
 #include <stdio.h>
 #include <jmemory.h>
 #include <string.h>
+#include <ctype.h>
 
 #define MAX_CMD_SIZE 100
 
-void input_loop();
+void get_input_loop();
+
+void handle_input();
+
+bool is_spaces(char * str);
 
 void run_jano(char *file_name);
 

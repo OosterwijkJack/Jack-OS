@@ -13,6 +13,8 @@ typedef struct free_list_t free_list_t;
 #define RAM_SIZE 20000000 // 20mb
 #define SWP_SIZE 30000000 // 30mb
 
+#define DEFAULT_PRGM_SIZE 10000
+
 extern int PLE; // Physical line of execution. (Keeps track of what data inside ram will be sent to CPU)
 
 #include <stdlib.h>

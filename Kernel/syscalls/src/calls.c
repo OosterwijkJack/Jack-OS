@@ -69,14 +69,14 @@ int _read(){ // FIXME
             if(write_address < regs[RSP])
                 ram[physical_write_addr+ bytes_read] = in; // heap grows down
             else
-                ram[physical_write_addr + ((running_prgm->size - regs[RSP]) - bytes_read)] = in; // stack grows up
+                ram[physical_write_addr - bytes_read] = in; // stack grows up
                 
             bytes_read++;
         }
         if(write_address < regs[RSP])
             ram[physical_write_addr + bytes_read] = 0;
         else
-            ram[physical_write_addr + ((running_prgm->size - regs[RSP]) - bytes_read)] = 0;
+            ram[physical_write_addr - bytes_read] = 0;
 
     }
     
@@ -104,23 +104,23 @@ int _write(){
     for(int i = 0; i < write_size; i++){
         // the way information is written or read depends on if it is the stack or the heap because they grow in opposite directions
         if(read_addr < regs[RSP])
-            to_write = ram[physical_read_addr + bytes_written];
+            to_write = ram[physical_read_addr + bytes_written]; // read data by tracing down ram
         else
-            to_write = ram[physical_read_addr + ((write_size) - bytes_written)];
+            to_write = ram[physical_read_addr - bytes_written]; // read data by tracing up ram
 
         if(to_write == 0) // handle terminating character
             break;
 
-        if(write_addr == running_prgm->stdout_base)
+        if(write_addr == running_prgm->stdout_base){
             printf("%c", to_write); // display contents from memory to screen if STDOUD is write address
+        }
         else{ // write to memory
             if(write_addr < regs[RSP]){ // if more than stack it is heap
                 ram[physical_write_addr + bytes_written] = to_write;
-
                 running_prgm->heap_size++; // increment heap size
             }
             else{
-                ram[physical_write_addr + ((running_prgm->size - regs[RSP]) - bytes_written )] = to_write; // stack
+                ram[physical_write_addr - bytes_written] = to_write; // stack
             }
             
         }

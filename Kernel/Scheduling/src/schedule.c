@@ -45,6 +45,10 @@ int draw_lottery(){
 int assign_tickets(){
     int prgm_count = 0;
     ticket_count = 0;
+
+    if(prgm_list == NULL)
+        return -1;
+
     for(prgm *ptr = prgm_list; ptr != NULL; ptr=ptr->next){ // assign tickets based on priority
 
         if(ptr->state == STATE_PAUSED)
@@ -82,6 +86,10 @@ int switch_program(prgm *new_prgm){ // schedule new program
     if(new_prgm == NULL)
         return -1;
 
+    // set new program as running
+    if(running_prgm != NULL)
+        running_prgm->state = STATE_READY; // assign ready state to override running state
+    running_prgm = new_prgm;
     for(int i = 0; i < REGISTER_COUNT; i ++){ // save value of programs registers
         running_prgm->save_regs[i] = regs[i];
         regs[i] = new_prgm->save_regs[i]; // set register values to new program
@@ -90,6 +98,6 @@ int switch_program(prgm *new_prgm){ // schedule new program
     if(regs[RSP] == 0) // set stack pointer for new programs
         regs[RSP] = new_prgm->size;
 
-    running_prgm = new_prgm;
+    new_prgm->state = STATE_RUNNING;
     return new_prgm->pid;
 }

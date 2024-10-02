@@ -73,7 +73,7 @@ int allocate_program(int size, int* pid, FILE* prgmCode, free_list_t **w_free_li
     int code_size = 0;
     if(prgmCode != NULL)
     // (base, max, program code)
-        code_size = write_memory((*w_prgm_list)->base + (*w_prgm_list)->code_base, (*w_prgm_list)->base + size-1,prgmCode); 
+        code_size = write_memory((*w_prgm_list)->base + (*w_prgm_list)->code_base, (*w_prgm_list)->base + size-1,prgmCode); // write program code
     
     if(code_size == 0){
         // make sure there is code
@@ -99,6 +99,7 @@ int allocate_program(int size, int* pid, FILE* prgmCode, free_list_t **w_free_li
         new_free->next = *w_free_list;
         *w_free_list = new_free;
     }
+    (*w_prgm_list)->state = STATE_READY;
     return (*w_prgm_list)->pid;
 
 }
@@ -249,7 +250,7 @@ int program_list_prepend(int base, int size, int* pid, prgm **w_prgm_list){
 
     tmp->stack_size = 0;
 
-    tmp->state = STATE_READY;
+    tmp->state = STATE_PAUSED;
     tmp->ticket = -1;
     tmp->priority = 1;
 
