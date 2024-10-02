@@ -71,7 +71,14 @@ void run_jexe(char *file_name){
         return;
     }
 
-    int pid = allocate_program(DEFAULT_PRGM_SIZE, NULL, prgm_code, &free_list, &prgm_list);
+    // create lock and signal execution thread that there is a new program
+    pthread_mutex_lock(&locks->execution_lock);
+
+    int pid = allocate_program(DEFAULT_PRGM_SIZE, NULL, prgm_code, &free_list, &prgm_list); // allocate program to prgm_list
+
+    conds->execution_done = 1;
+    pthread_mutex_unlock(&locks->execution_lock);
+    pthread_cond_signal(&conds->execution_cond);
 
 
     // TO DO: Replace spin loops with thread signiling

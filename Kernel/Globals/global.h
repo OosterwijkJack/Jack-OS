@@ -20,6 +20,7 @@ extern int PLE; // Physical line of execution. (Keeps track of what data inside 
 #include <stdlib.h>
 #include <stdbool.h>
 #include <cpu.h>
+#include <pthread.h>
 
 #define STATE_RUNNING 0 // program is running
 #define STATE_READY 1 // program is ready to run
@@ -57,7 +58,22 @@ typedef struct free_list_t {
     struct free_list_t *prev;
 } free_list_t;
 
+
+typedef struct locks_t{
+    pthread_mutex_t execution_lock; 
+}locks_t;
+
+typedef struct cond_t{
+    pthread_cond_t execution_cond; // signals j_shell.c when a program has complete after running one
+    int execution_done;
+
+}cond_t;
+
+
 // vars
+extern locks_t *locks;
+extern cond_t *conds;
+
 extern free_list_t *free_list;
 extern prgm *prgm_list;
 

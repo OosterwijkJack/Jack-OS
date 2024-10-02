@@ -24,6 +24,7 @@ int main(void){ // init everything
 void *execution_loop(){ // forever loop deals with executing active programs and context switching
  // physical line of execution
 
+    // Rethink this
     while(execution_thread->running){
 
         while(running_prgm == NULL){ // dont do anything when there is no programs

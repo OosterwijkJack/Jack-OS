@@ -6,6 +6,9 @@ free_list_t *free_list = NULL;
 prgm *swp_prgm_list = NULL;
 free_list_t *swp_free_list = NULL;
 
+cond_t *conds = NULL;
+locks_t *locks = NULL;
+
 int PLE = 0;
 
 
