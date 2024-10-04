@@ -18,12 +18,16 @@ void threads_init(){
     // init locks
     locks = malloc(sizeof(locks_t));
     pthread_mutex_init(&locks->execution_lock, NULL);
+    pthread_mutex_init(&locks->deallocation_lock, NULL);
 
     // init conds and cond variables
     conds = malloc(sizeof(cond_t));
     
     pthread_cond_init(&conds->execution_cond,NULL);
     conds->execution_done = 0;
+
+    pthread_cond_init(&conds->deallocation_cond,NULL);
+    conds->deallocation_done = 0;
 }
 
 void start_execution_thread(){

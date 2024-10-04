@@ -17,6 +17,7 @@
         "time.h": "c",
         "j_threads.h": "c",
         "pthread.h": "c",
-        "j_shell.h": "c"
+        "j_shell.h": "c",
+        "jfs.h": "c"
     }
 }

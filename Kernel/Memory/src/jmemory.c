@@ -126,6 +126,12 @@ int deallocate_program(int pid, prgm **w_prgm_list, free_list_t **w_free_list, c
     program_list_delete(program, w_prgm_list);
 
     merge_free_nodes(w_free_list); // check if any free nodes can be merged
+
+    pthread_mutex_lock(&locks->deallocation_lock);
+    conds->deallocation_done = 1;
+    pthread_cond_signal(&conds->deallocation_cond);
+    pthread_mutex_unlock(&locks->deallocation_lock);
+
     return 1; // success
 }
 

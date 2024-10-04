@@ -4,6 +4,9 @@
 #include <ctype.h>
 
 #define MAX_CMD_SIZE 100
+#define ROOT_PATH "../File System/root"
+
+int cur_dir;
 
 void get_input_loop();
 

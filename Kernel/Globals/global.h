@@ -61,11 +61,15 @@ typedef struct free_list_t {
 
 typedef struct locks_t{
     pthread_mutex_t execution_lock; 
+    pthread_mutex_t deallocation_lock;
 }locks_t;
 
 typedef struct cond_t{
-    pthread_cond_t execution_cond; // signals j_shell.c when a program has complete after running one
+    pthread_cond_t execution_cond; // Signal is sent to execution loop when a new program is allocated
     int execution_done;
+
+    pthread_cond_t deallocation_cond; // signals sent to shell when a program is deallocated
+    int deallocation_done;
 
 }cond_t;
 

@@ -20,6 +20,7 @@ void split_command(char cmd[MAX_CMD_SIZE], char out[2][MAX_CMD_SIZE]){
 void get_input_loop(){
     char buf[MAX_CMD_SIZE];
     char command[2][MAX_CMD_SIZE];
+
     while(1){
 
         memset(buf, 0, sizeof(buf)); // zero buf
@@ -77,13 +78,13 @@ void run_jexe(char *file_name){
     int pid = allocate_program(DEFAULT_PRGM_SIZE, NULL, prgm_code, &free_list, &prgm_list); // allocate program to prgm_list
 
     conds->execution_done = 1;
-    pthread_mutex_unlock(&locks->execution_lock);
     pthread_cond_signal(&conds->execution_cond);
+    pthread_mutex_unlock(&locks->execution_lock);
 
-
-    // TO DO: Replace spin loops with thread signiling
-    while(get_program(pid, prgm_list)){ // wait for program to finish
-        usleep(100 * 1000);
+    pthread_mutex_lock(&locks->deallocation_lock);
+    while(conds->deallocation_done == 0){ // wait for program to finish
+        pthread_cond_wait(&conds->deallocation_cond, &locks->deallocation_lock);
     }
-
+    conds->deallocation_done = 0;
+    pthread_mutex_unlock(&locks->deallocation_lock);
 }

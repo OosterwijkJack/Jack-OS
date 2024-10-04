@@ -26,16 +26,21 @@ void *execution_loop(){ // forever loop deals with executing active programs and
 
     // Rethink this
     while(execution_thread->running){
+        if(running_prgm == NULL){ // dont do anything when there is no programs
+            
+            pthread_mutex_lock(&locks->execution_lock);
 
-        while(running_prgm == NULL){ // dont do anything when there is no programs
-            // Make this into a bool func that only returns true if a ready program exists. 
+            while(conds->execution_done == 0)
+                pthread_cond_wait(&conds->execution_cond, &locks->execution_lock);
+
+            conds->execution_done = 0;
+
+            pthread_mutex_unlock(&locks->execution_lock);
+
             if(prgm_list != NULL){ // if there is a program attempt to schedule it 
                 draw_lottery();
                 continue;
             }
-
-            usleep(1000);
-            continue;
         }
         PLE = regs[RPC] + running_prgm->base + running_prgm->code_base;
         unsigned int opcode = 0; 
@@ -45,7 +50,7 @@ void *execution_loop(){ // forever loop deals with executing active programs and
 
         if(opcode == 0){
             //display_registers();
-            program_list_delete(running_prgm, &prgm_list); // delete finished program 
+            deallocate_program(running_prgm->pid, &prgm_list, &free_list, ram);
             running_prgm = NULL;
 
             if(prgm_list == NULL) // if no more programs exit

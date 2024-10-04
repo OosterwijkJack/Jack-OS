@@ -7,6 +7,8 @@ jano {file} - nano but made by jack
 jexe {file} - jack execute (execute program)
 
 ls - list dir contents
+flags:
+-i show inodes
 
 shutdown - shutdown operating system and exit
 
@@ -15,6 +17,8 @@ cd {path} - change jack directory
 kill {pid} - kills process
 
 rm {file/dir} - rm a file or dir
+flags:
+-r recursively delete all files in a dir
 
 mkdir - make directory
 
