@@ -1,12 +1,14 @@
+#pragma once
 #include <stdio.h>
 #include <jmemory.h>
 #include <string.h>
 #include <ctype.h>
+#include <sys/wait.h>
 
-#define MAX_CMD_SIZE 100
-#define ROOT_PATH "../File System/root"
+#define CMD_SIZE 100
+#define PATH_SIZE 200
 
-int cur_dir;
+#define ROOT_PATH "/home/jack/Desktop/Jack-OS/File_System/root"
 
 void get_input_loop();
 

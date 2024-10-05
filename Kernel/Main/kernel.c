@@ -53,12 +53,9 @@ void *execution_loop(){ // forever loop deals with executing active programs and
             deallocate_program(running_prgm->pid, &prgm_list, &free_list, ram);
             running_prgm = NULL;
 
-            if(prgm_list == NULL) // if no more programs exit
-                continue;
+            if(prgm_list != NULL) // if more programs try drawing lottery
+                draw_lottery();
             
-            draw_lottery();
-
-            PLE = regs[RPC] + running_prgm->base+running_prgm->code_base;
             continue;
         }
 
