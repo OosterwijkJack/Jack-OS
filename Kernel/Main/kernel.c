@@ -67,7 +67,3 @@ void *execution_loop(){ // forever loop deals with executing active programs and
 
     }
 }
-
-void shutdown(){
-    kill_threads();
-}

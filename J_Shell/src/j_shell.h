@@ -6,6 +6,7 @@
 #include <sys/wait.h>
 
 #define CMD_SIZE 100
+#define ARGS_SIZE 3
 #define PATH_SIZE 200
 
 #define ROOT_PATH "/home/jack/Desktop/Jack-OS/File_System/root"
@@ -37,3 +38,5 @@ void run_ps(char *flag);
 void run_clear();
 
 void run_cat(char *file);
+
+void run_jasm(char *in, char *out);

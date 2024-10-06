@@ -40,9 +40,11 @@ void start_execution_thread(){
 }
 
 void *time_thread_void(){
-    time_thread->tock = clock();
+    time(&time_thread->tock);
+    time_t now;
     while(time_thread->running){
-        time_thread->time_since = (double)(clock()-time_thread->tock) / CLOCKS_PER_SEC;
+        time(&now);
+        time_thread->time_since = (double)(now-time_thread->tock);
         usleep(SLEEP_TIME*1000);
     }
 }

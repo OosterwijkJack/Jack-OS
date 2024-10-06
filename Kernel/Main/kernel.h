@@ -11,4 +11,3 @@
 #define TIME_SLICE 0.1// 100 ms
 
 void *execution_loop();
-void shutdown();

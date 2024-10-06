@@ -34,7 +34,7 @@ int draw_lottery(){
                 printf("Schedule failure\n");
                 exit(EXIT_FAILURE);
             }
-            time_thread->tock = clock(); // reset timer    
+            time(&time_thread->tock); // reset timer    
             return ptr->pid; 
         } 
             
