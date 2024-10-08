@@ -1,0 +1,6 @@
+-write open and close syscall
+-make it easier to write text to screen
+-write an assembly program that converts a number to a string
+-write an assembly language general purpose intiger calculator
+
+-begin implementing gui and support for multiple terminals (dont know how yet)

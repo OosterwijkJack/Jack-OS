@@ -94,7 +94,7 @@ int _write(){
 
     int bytes_written = 0;
 
-    if(!valid_address(write_addr, write_size) || read_addr == 0 || write_size == 0) // checck inputs are valid
+    if(!valid_address(write_addr, write_size) || read_addr == 0 || write_size == 0) // check inputs are valid
         return -1;
     
     int physical_read_addr = running_prgm->base + read_addr;
