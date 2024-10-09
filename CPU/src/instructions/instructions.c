@@ -207,6 +207,5 @@ void _pop(){ // pop from top of stack
 }
 
 void _int(){
-
     int rc = sysapi[regs[RA1]]();
 }

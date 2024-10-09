@@ -18,3 +18,5 @@ int change_prgm_state(int state); // change between state: paused, ready, runnin
 int assign_tickets(); // assign tickets for lottery draw through priority and randomness
 
 int draw_lottery(); // returns winning program
+
+void terminate_running_program();

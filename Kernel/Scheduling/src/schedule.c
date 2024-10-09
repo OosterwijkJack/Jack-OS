@@ -3,6 +3,10 @@
 prgm * running_prgm = NULL;
 int ticket_count = 0;
 
+void terminate_running_program(){
+    running_prgm = NULL; // might need to add a new lock
+}
+
 void schedule_init(){
     srand(time(NULL)); // set rand seed
     running_prgm = prgm_list;
