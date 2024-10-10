@@ -45,7 +45,7 @@ int _read(){ // FIXME
     int bytes_read = 0;
 
     if(read_addr == 0){ // check valid read addr
-        pritnf("Null read addr in read call\n");
+        printf("Null read addr in read call\n");
         terminate_running_program();
         return -1; 
     }
@@ -158,8 +158,13 @@ int _open(){
     }
     // get file name from memory
 
+    char file_name[FILENAME_MAX] = {0};
+
+    strcat(file_name, cur_path); // start at programs cur path
+    strcat(file_name, "/");
     int bytes_read = 0;
-    char file_name[FILENAME_MAX];
+    int fname_counter = strlen(file_name);
+
     char read;
     while(1){
         if(file_name_addr < regs[RSP]){
@@ -176,20 +181,24 @@ int _open(){
             terminate_running_program();
             return -1;
         }
-        file_name[bytes_read] = read;
+        file_name[fname_counter++] = read;
         bytes_read++;
     }
     FILE *fptr = fopen(file_name, "r");
 
     if(fptr == NULL){
-        printf("Invalid file\n"); // remove when I know it works
+        printf("Invalid file: %s\n", file_name); // remove when I know it works
         return -1;
     }
 
     // read file
     char file_read_buf[write_size];
+    memset(file_read_buf, 0, write_size);
+
     size_t file_bytes_read = fread(file_read_buf, sizeof(char), write_size, fptr);
     fclose(fptr);
+
+    file_read_buf[strlen(file_read_buf)+1] = '\0';
 
     if(file_bytes_read <= 0){
         printf("0 bytes read from fptr\n");
@@ -197,6 +206,10 @@ int _open(){
     }
 
     for(int i = 0; i < write_size; i++){ // write to ram
+        if(file_read_buf[i] == 0){
+            break;
+        }
+
         if(write_address < regs[RSP]){
             ram[running_prgm->base + write_address + i] = file_read_buf[i];
         }

@@ -1,4 +1,4 @@
--write open and close syscall
+-write close syscall, create list of all open files with information
 -make it easier to write text to screen
 -write an assembly program that converts a number to a string
 -write an assembly language general purpose intiger calculator

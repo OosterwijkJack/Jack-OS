@@ -1,0 +1,16 @@
+movd rsp,rsb
+
+pushb 106
+
+// open file
+
+movd rsp,rek
+movd 2000,rjo
+movd 50,r9
+int 2 // open syscall
+
+// write to stdout
+movd 2000,rek
+movd STDOUT,rjo
+movd 50,r9
+int 1 // write 

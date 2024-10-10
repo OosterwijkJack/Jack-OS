@@ -11,6 +11,8 @@
 
 #define ROOT_PATH "/home/jack/Desktop/Jack-OS/File_System/root"
 
+extern char cur_path[PATH_SIZE];
+
 void get_input_loop();
 
 void handle_input();
