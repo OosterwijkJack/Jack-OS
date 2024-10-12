@@ -166,8 +166,22 @@ void run_cd(char * dir){
         strcpy(cur_path, ROOT_PATH);
     }
     else{
-        strcat(cur_path, "/");
-        strcat(cur_path, dir);
+        char tmp_path[PATH_SIZE + FILENAME_MAX];
+        strcpy(tmp_path, cur_path);
+        strcat(tmp_path, "/");
+        strcat(tmp_path, dir);
+
+        DIR *dir_exists = opendir(tmp_path);
+
+        if(dir_exists){
+            strcat(cur_path, "/");
+            strcat(cur_path, dir);
+        }
+        else{
+            printf("Can't find directory %s\n", dir);
+            return;
+        }
+
     }
 }
 

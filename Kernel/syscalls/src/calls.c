@@ -2,6 +2,8 @@
 
 bool waiting_for_input = false;
 bool stdin_updated = false;
+open_files_t *open_files = NULL;
+int cur_fd = 0;
 
 int (*sysapi[CALL_COUNT])(void) = {
     _read,
@@ -147,24 +149,29 @@ int _write(){
 }
 
 int _open(){
+
+    open_files_t* file_node = malloc(sizeof(open_files_t)); // open files ll node
+    
     int file_name_addr = regs[REK];
     int write_address = regs[RJO];
     int write_size = regs[R9];
 
     if(!valid_address(write_address,write_size)){
         printf("Invalid write address in open syscall\n");
+        free(file_node);
         terminate_running_program();
         return -1 ;
     }
     // get file name from memory
 
-    char file_name[FILENAME_MAX] = {0};
+    char file_name[FILENAME_MAX+PATH_SIZE] = {0};
 
     strcat(file_name, cur_path); // start at programs cur path
     strcat(file_name, "/");
     int bytes_read = 0;
     int fname_counter = strlen(file_name);
 
+    // read filename
     char read;
     while(1){
         if(file_name_addr < regs[RSP]){
@@ -187,6 +194,7 @@ int _open(){
     FILE *fptr = fopen(file_name, "r");
 
     if(fptr == NULL){
+        free(file_node);
         printf("Invalid file: %s\n", file_name); // remove when I know it works
         return -1;
     }
@@ -201,26 +209,58 @@ int _open(){
     file_read_buf[strlen(file_read_buf)+1] = '\0';
 
     if(file_bytes_read <= 0){
+        free(file_node);
         printf("0 bytes read from fptr\n");
         return -1;
     }
 
-    for(int i = 0; i < write_size; i++){ // write to ram
+    int i = 1;
+    for(; i < write_size; i++){ // write to ram
         if(file_read_buf[i] == 0){
             break;
         }
 
         if(write_address < regs[RSP]){
-            ram[running_prgm->base + write_address + i] = file_read_buf[i];
+            ram[running_prgm->base + write_address + i] = file_read_buf[i-1];
         }
         else{
-            ram[running_prgm->base + write_address - i] = file_read_buf[i];
+            ram[running_prgm->base + write_address - i] = file_read_buf[i-1];
         }
+        
     }
+    file_node->start_region = write_address + running_prgm->base;
+    file_node->end_region = write_address + running_prgm->base + i;
+    file_node->fd = cur_fd++;
+
+    // add file_node to ll
+
+    file_node->next = open_files;
+    open_files = file_node;
 
 }
 
-int _close(){
+int _close(){ 
+    int fd_p = regs[REK]; 
+
+    int fd = ram[running_prgm->base + fd_p]; // fetch fd from ram
+
+    open_files_t *file = NULL;
+
+    for(file=open_files; file != NULL; file=file->next){
+        if(file->fd == fd)
+            break;
+    }
+
+    if(file == NULL){
+        printf("File descriptor not found\n");
+        return -1;
+    }
+
+    int end = file->end_region;
+
+    for(int location = file->start_region; location < end; location++){
+        ram[location] == 0;
+    }
 
 }
 

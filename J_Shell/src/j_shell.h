@@ -1,9 +1,11 @@
 #pragma once
 #include <stdio.h>
-#include <jmemory.h>
+#include "jmemory.h"
 #include <string.h>
 #include <ctype.h>
 #include <sys/wait.h>
+#include <dirent.h>
+#include <errno.h>
 
 #define CMD_SIZE 100
 #define ARGS_SIZE 3
