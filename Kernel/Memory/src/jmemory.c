@@ -69,11 +69,25 @@ int allocate_program(int size, int* pid, FILE* prgmCode, free_list_t **w_free_li
     // prepend program list
     program_list_prepend(best->base, size, pid, w_prgm_list);
 
+    // write program data 
+    int data_size = 0;
+    if(prgmCode != NULL){
+        data_size = write_memory((*w_prgm_list)->base + (*w_prgm_list)->data_base, (*w_prgm_list)->base + size-1,prgmCode); // write program data
+    }
+
+    // assign bases now that we are aware of data size
+    (*w_prgm_list)->data_size = data_size;
+
+    (*w_prgm_list)->screen_base = (*w_prgm_list)->data_base + (*w_prgm_list)->data_size;
+    (*w_prgm_list)->screen_size = 500;
+
+    (*w_prgm_list)->code_base = (*w_prgm_list)->screen_base + (*w_prgm_list)->screen_size;
+    
     // Write program code into memory block at base + code_base
     int code_size = 0;
-    if(prgmCode != NULL)
+
     // (base, max, program code)
-        code_size = write_memory((*w_prgm_list)->base + (*w_prgm_list)->code_base, (*w_prgm_list)->base + size-1,prgmCode); // write program code
+    code_size = write_memory((*w_prgm_list)->base + (*w_prgm_list)->code_base, (*w_prgm_list)->base + size-1,prgmCode); // write program code
     
     if(code_size == 0){
         // make sure there is code
@@ -356,7 +370,8 @@ int zero_memory(int base, int bound, char * mem){
     return 1;
 }
 
-int write_memory(int base, int max, FILE* mem){
+
+int write_code(int base, int max, FILE* mem){
     if(mem == NULL){
         printf("Invalid file\n");
         exit(EXIT_FAILURE);
@@ -365,6 +380,8 @@ int write_memory(int base, int max, FILE* mem){
     int count = 0;
     char buf[INT_S/4+2];
     int size = 0;
+    int binary = 0;
+    int zero_count = 0;
     for(int i = base; ;  i++){
 
         if(i >= max){
@@ -379,13 +396,23 @@ int write_memory(int base, int max, FILE* mem){
 
         if(strlen(buf) != 8){
             printf("Invalid memory length at line %i. Cant load program.", count);
-            return 1;
+            return 0;
         }
-        int binary = binarys_to_int(buf, 8);
+        binary = binarys_to_int(buf, INT_S/4);
+
+        // count zeros
+        if(binary == 0)
+            zero_count++;
+        else
+            zero_count = 0;
+
+        if(zero_count >= 4){ // data section terminates with 32 bits of 0
+            break;
+        }
+
         ram[i] = binary;
         size++;
     }
-    rewind(mem);
     return size;
 }
 

@@ -6,6 +6,5 @@
     .ascii "bye\n"
 
 
-
 .main
     movd rsp,rsb

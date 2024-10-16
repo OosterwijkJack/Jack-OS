@@ -60,12 +60,9 @@ reg_names = {
     "rjo": 20,
 }
 
-constants = {
-    "STDIN": 1,
-    "STDOUT": 513
-}
 
-label_dict = {}
+label_dict = { "STDIN": 1,
+              "STDOUT": 513}
 bits = []
     
 def main ():
@@ -74,43 +71,66 @@ def main ():
         print("Usage: python3 assembler.py {file} {out}")
         exit(1)
 
-    
-    convert_labels() # converts labels to numbers
+    remove_whitespace()
     assemble_data()
-    #assemble_no_labels() # assembles
+    print(label_dict)
+    convert_labels() # converts labels to numbers
+    assemble_no_labels() # assembles
 
     #open(sys.argv[2], 'w').write(assembled)
 
 
 def assemble_data():
-    cur_data_location = HEAP_BASE
+    cur_data_location = DATA_BASE
     f = open(sys.argv[2], "r")
+    cur_label = ""
 
     for i,j in enumerate(f.readlines()): # iterate through data section
         j = str(j)
         if(i == 0 and "data" not in j): # if no data quit
             print("No data")
+
+            for i in range(4):
+                bits.append("0"*8)
             return
+
         elif (i==0):
             continue
+
+        # end of data function
+        if(j.startswith(".main")):
+            for i in range(3):
+                bits.append("0"*8)
+            break
         
-        if(i % 2 != 0): # evalutating symbols 
-            pass
+        j = j.strip()
+        if(i % 2 != 0): # evalutating labels 
+            j = j.replace(":", "")
+            cur_label = j
+
 
         else: # writing data as 0s and 1s
-            j = j.strip()
             if(j.startswith(".ascii")): # user defined text
                 j = j.replace(".ascii", "").replace("\\n", "\n")
                 ascii = j[2:-1] # extract data text
-                print(ascii)
                 ascii_to_bits(ascii) # add bits to global bits
-                cur_data_location += len(ascii) + 1 # change heap location so it can be used to convert symbols
+
+                # append location of data to label dict
+                if(cur_label in label_dict.keys()):
+                    print(f"Two definitions of label {cur_label}")
+                    exit(1)
+
+                label_dict[cur_label] = cur_data_location
+
+                cur_data_location += len(ascii)+1 # change heap location so it can be used to convert symbols
+
             
             elif(j.startswith("dword")):
                 pass
             else:
                 print(f"Invalid data type: {j}")
                 exit(1) 
+    f.close()
 
 
 def ascii_to_bits(ascii:str):
@@ -124,13 +144,9 @@ def ascii_to_bits(ascii:str):
 def assemble_no_labels():
     global bits
     f = open(sys.argv[2], 'r')
+    main = False
 
     for i in f.readlines():
-        # convert constants
-        for e in constants.keys():
-            if(e in i):
-                i = i.replace(e, str(constants[e]))
-
 
         if(len(i) <= 1):
             continue
@@ -146,7 +162,7 @@ def assemble_no_labels():
         bits.append(curstr)
     f.close()
 
-    write_bits_out(bits)
+    write_bits_out()
 
 
 def get_instruction_bits(text):
@@ -205,7 +221,8 @@ def get_arg2_bits(text:str):
         out += "0"*6
     return out
 
-def write_bits_out(bits):
+def write_bits_out():
+    global bits
     f = open(sys.argv[2],'w')
     # split 4 byte operation into 1 byte
     for bit_str in (bits):
@@ -215,12 +232,33 @@ def write_bits_out(bits):
 
             #  reverse order        
         bytes_data.reverse()
-
+  
+        # write
         for i in bytes_data:
             f.write(i + "\n")
     f.close()
 
 
+def remove_whitespace():
+    lines = []
+    with open(sys.argv[1], 'r') as f:
+        for i in f.readlines():
+            lines.append(i)
+        f.close()
+
+    
+    f = open(sys.argv[2], 'w')
+    for j in lines:
+        j = j.strip()
+        if(j.strip() == ''): # ignore white space
+            continue
+
+        if(j.startswith)("//"):
+            continue
+        f.write(j + "\n")
+        
+    
+        
 def convert_labels():
     lines = []
     with open(sys.argv[1], 'r') as f:
@@ -231,14 +269,18 @@ def convert_labels():
     # add labels to label dict and remove them from lines list
     line_count = 0
     lines_new = []
+    main = False
+
     for j in lines:
         j = str(j)
         j = j.strip()
 
-        if(j.strip() == ''): # ignore white space
+        # ignore anything not under .main
+        if(j.startswith(".main")):
+            main = True
             continue
 
-        if(j.startswith)("//"):
+        if(not main):
             continue
 
         tmp = j.find("//")
@@ -258,16 +300,15 @@ def convert_labels():
 
     file = open(sys.argv[2], 'w')
     for i in lines_new:        
+        # if label dict empty just write
         if(len(label_dict) <= 0):
             file.write(i + "\n")
             continue
 
-        for j in label_dict.keys():
-
-            if j in i:
-                file.write(i.replace(j, str(label_dict[j])) + "\n")
-            else: 
-                file.write(i + "\n")
+        if i in  label_dict.keys():
+            file.write(i.replace(j, str(label_dict[j])) + "\n")
+        else: 
+            file.write(i + "\n")
     file.close()
 
 
