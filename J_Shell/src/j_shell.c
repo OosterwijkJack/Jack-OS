@@ -166,6 +166,7 @@ void run_cd(char * dir){
         strcpy(cur_path, ROOT_PATH);
     }
     else{
+        // ensure dir exists
         char tmp_path[PATH_SIZE + FILENAME_MAX];
         strcpy(tmp_path, cur_path);
         strcat(tmp_path, "/");

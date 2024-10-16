@@ -11,6 +11,8 @@ ARG2_BITS = 5
 ARG1_BITS = 19
 ARG1_SIZE = (2**ARG1_BITS)-1
 
+DATA_BASE = 0 # idk
+
 func_table = {
     "add": 0,
     "sub": 1,
@@ -64,7 +66,8 @@ constants = {
 }
 
 label_dict = {}
-
+bits = []
+    
 def main ():
 
     if(len(sys.argv) < 3 or len(sys.argv) > 3):
@@ -73,13 +76,54 @@ def main ():
 
     
     convert_labels() # converts labels to numbers
-    assemble_no_labels() # assembles
+    assemble_data()
+    #assemble_no_labels() # assembles
 
     #open(sys.argv[2], 'w').write(assembled)
 
+
+def assemble_data():
+    cur_data_location = HEAP_BASE
+    f = open(sys.argv[2], "r")
+
+    for i,j in enumerate(f.readlines()): # iterate through data section
+        j = str(j)
+        if(i == 0 and "data" not in j): # if no data quit
+            print("No data")
+            return
+        elif (i==0):
+            continue
+        
+        if(i % 2 != 0): # evalutating symbols 
+            pass
+
+        else: # writing data as 0s and 1s
+            j = j.strip()
+            if(j.startswith(".ascii")): # user defined text
+                j = j.replace(".ascii", "").replace("\\n", "\n")
+                ascii = j[2:-1] # extract data text
+                print(ascii)
+                ascii_to_bits(ascii) # add bits to global bits
+                cur_data_location += len(ascii) + 1 # change heap location so it can be used to convert symbols
+            
+            elif(j.startswith("dword")):
+                pass
+            else:
+                print(f"Invalid data type: {j}")
+                exit(1) 
+
+
+def ascii_to_bits(ascii:str):
+    global bits
+    for i in ascii: 
+        binary = bin(ord(i))[2:].zfill(8)
+        bits.append(binary)
+    bits.append(bin(0)[2:].zfill(8))
+
+
 def assemble_no_labels():
+    global bits
     f = open(sys.argv[2], 'r')
-    bits = []
 
     for i in f.readlines():
         # convert constants
@@ -225,8 +269,6 @@ def convert_labels():
             else: 
                 file.write(i + "\n")
     file.close()
-
-        
 
 
 if __name__ == "__main__":

@@ -50,6 +50,7 @@ void execute_instruction(unsigned int opCode){
     unsigned int arg2_identifier = (opCode >> 5) & 0x1;
     unsigned int arg2 = (opCode) & 0x1f; // 1*5
 
+
     if(((arg1_identifier == FLAG_ISREG || arg1_identifier == FLAG_ISADDR_REG1) && arg1 > REGISTER_COUNT) || arg2 > REGISTER_COUNT){
         printf("Invalid register\n");
         return;
@@ -91,4 +92,6 @@ void execute_instruction(unsigned int opCode){
 
 }
 
+void load_data_section(){
 
+}

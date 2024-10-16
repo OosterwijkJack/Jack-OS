@@ -110,7 +110,7 @@ int _write(){
     int bytes_written = 0;
 
     if(!valid_address(write_addr, write_size) || read_addr == 0 || write_size == 0){ // check inputs are valid 
-        printf("Invalid write address\n");
+        printf("Invalid write address: %i\n", write_addr);
         terminate_running_program();
         return -1;
     }

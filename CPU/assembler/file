@@ -1,18 +1,11 @@
-// uses the read syscall
 
-movd rsp,rsb
-sub 1,rsp
-
-movd STDIN,rek
-movb [rsp],STDIN
-movd 1,r9
-
-compb 65,[rsp]
-
-jeq success
-
-success:
-mov 100,r0
+.data
+    hello:
+    .ascii "hello\n"
+    bye:
+    .ascii "bye\n"
 
 
 
+.main
+    movd rsp,rsb

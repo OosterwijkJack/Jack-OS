@@ -37,6 +37,8 @@ typedef struct prgm {
     int stdout_base;
     int screen_base;
     int screen_size; // screen size
+    int data_base;
+    int data_size;
     int code_base; // program base within segment
     int code_size; // program size
     int heap_base; // where is heap

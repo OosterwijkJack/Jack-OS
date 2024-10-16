@@ -1,0 +1,18 @@
+movd rsp,rsb
+
+pushb 106
+sub 1,rsp
+pushb 106
+
+movd rsp,r0
+add 1,r0
+
+movd r0,rek
+movd 1661,rjo
+movd 2,r9
+int 1
+
+movd 1661,rek
+movd STDOUT,rjo
+movd 3,r9
+int 1

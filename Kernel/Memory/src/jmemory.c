@@ -249,10 +249,13 @@ int program_list_prepend(int base, int size, int* pid, prgm **w_prgm_list){
 
     tmp->stdout_base = STDIN_SIZE + tmp->stdin_base;
 
-    tmp->screen_base = tmp->stdout_base + STDOUT_SIZE;
-    tmp->screen_size = 500;
+    // data hasnt been loaded yet so cant init anything below it 
+    tmp->data_base = tmp->stdout_base + STDOUT_SIZE;
 
-    tmp->code_base = tmp->screen_base + tmp->screen_size;
+    // to init:
+    // screen,code,heap
+
+    // stack base is always just the size of the program
 
     tmp->stack_size = 0;
 
@@ -423,3 +426,4 @@ void print_memory(){
     }
     printf("\n\n-------------------");
 }
+

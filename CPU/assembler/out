@@ -1,8 +1,10 @@
+.data
+.data
+.ascii "1\n"
+.ascii "hello\n"
+.ascii "bye\n"
+.ascii "2\n"
+.main
+.main
 movd rsp,rsb
-sub 1,rsp
-movd STDIN,rek
-movb [rsp],STDIN
-movd 1,r9
-compb 65,[rsp]
-jeq 7
-mov 100,r0
+movd rsp,rsb

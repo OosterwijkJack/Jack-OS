@@ -1,5 +1,9 @@
 #include "kernel.h"
 
+void print_prgm_memory(){
+    printf("HEAP BASE: %i", running_prgm->heap_base);
+}
+
 int main(void){ // init everything
 
     init_memory();
