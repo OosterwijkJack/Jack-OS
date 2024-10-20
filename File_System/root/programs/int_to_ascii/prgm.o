@@ -1,0 +1,47 @@
+// Converts intiger to ascii
+// r0 : Number to be converted to ascii
+// r1 : value of '0' in ascii
+// r2: holder for moduelo operations
+// r3: counter
+
+.data
+	zero:
+	.ascii "0"
+
+.main
+	movd rsp,rsb
+
+	movd 312,r0
+	movb [zero],r1 // mov value of ascii zero to r0
+	movd r0,r2 // for moduleo operations
+
+
+	START:
+	cmpd 0,r0 // jump to end if num less then zero
+	jeq END
+
+	mod 10,r2 // get last number
+	add r1,r2 // convert to ascii
+
+	// add to stack
+	pushb r2
+	sub 1,rsp
+
+	div 10,r0
+	movd r0,r2
+
+	add 1,r3
+	jmp START
+
+	END:
+
+	// start of buf address
+	movd rsp,r4
+	add r3,r4
+
+	add 1,r3
+
+	movd r4,rek
+	movd STDOUT,rjo
+	movd r3,r9
+	int 1

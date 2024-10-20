@@ -1,40 +1,42 @@
-movd rsp,rsb
 
-// write characters to stack length 
-pushb 105 //i 
-sub 1,rsp
-pushb 32 // "space"
-sub 1,rsp
-pushb 108 // l
-sub 1,rsp
-pushb 111 // o
-sub 1,rsp
-pushb 118 // v
-sub 1,rsp
-pushb 101 // e
-sub 1,rsp
-pushb 32 // "space"
-sub 1,rsp
-pushb 101 // e
-sub 1,rsp
-pushb 108 // l
-sub 1,rsp
-pushb 108 // l
-sub 1,rsp
-pushb 105 // i
-sub 1,rsp
-pushb 101 // e
-sub 1,rsp
-pushb 10 // \n
-sub 1,rsp
-pushb 0
+.main
+	movd rsp,rsb
+
+	// write characters to stack length 
+	pushb 105 //i 
+	sub 1,rsp
+	pushb 32 // "space"
+	sub 1,rsp
+	pushb 108 // l
+	sub 1,rsp
+	pushb 111 // o
+	sub 1,rsp
+	pushb 118 // v
+	sub 1,rsp
+	pushb 101 // e
+	sub 1,rsp
+	pushb 32 // "space"
+	sub 1,rsp
+	pushb 101 // e
+	sub 1,rsp
+	pushb 108 // l
+	sub 1,rsp
+	pushb 108 // l
+	sub 1,rsp
+	pushb 105 // i
+	sub 1,rsp
+	pushb 101 // e
+	sub 1,rsp
+	pushb 10 // \n
+	sub 1,rsp
+	pushb 0
 
 
-// read ptr
-movd rsp,r0
-add 13,r0 // # of rsp subtractions
+	// read ptr
+	movd rsp,r0
+	add 13,r0 // # of rsp subtractions
 
-movd r0,rek
-movd STDOUT,rjo
-movd 14,r9 // length of str (including endline)
-int 1
+	movd r0,rek
+	movd STDOUT,rjo
+	movd 14,r9 // length of str (including endline)
+	int 1

@@ -86,7 +86,10 @@ void _sub(){
 
 void _div(){
     int num1 = get_num1(false);
-    regs[regs[RA2]] /= num1; // add to value of register
+
+    int reg_value = (int)regs[regs[RA2]]/num1;
+
+    regs[regs[RA2]] = reg_value; // add to value of register
 }
 
 
@@ -118,7 +121,7 @@ void _not() {
 
 void _mod(){
     int num1 = get_num1(false);
-    regs[regs[RA1]] %= num1;
+    regs[regs[RA2]] %= num1;
 }
 
 void _cmpb() {
@@ -156,21 +159,21 @@ void _cmpd() {
 void _jeq() {
 
     if(regs[RCF] == FLAG_ZRO)
-        regs[RPC] = (regs[RA1]-1)*sizeof(int);
+        regs[RPC] = (regs[RA1])*sizeof(int);
 
 }
 
 void _jlt() {
 
     if(regs[RCF] == FLAG_NEG) // num2 - num1 will be negative if num2 is less than 
-        regs[RPC] = (regs[RA1]-1) * sizeof(int);
+        regs[RPC] = (regs[RA1]) * sizeof(int);
     
 }
 
 void _jgt() {
 
     if(regs[RCF] == FLAG_POS)
-        regs[RPC] = (regs[RA1]-1)*sizeof(int);
+        regs[RPC] = (regs[RA1])*sizeof(int);
 }
 
 void _jne() {
@@ -180,7 +183,7 @@ void _jne() {
 }
 
 void _jmp() {
-    regs[RPC] = (regs[RA1]-1)*sizeof(int);
+    regs[RPC] = (regs[RA1])*sizeof(int);
 }
 
 void _pushb(){ // push to stack

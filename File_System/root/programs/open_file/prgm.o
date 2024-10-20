@@ -1,23 +1,24 @@
-movd rsp,rsb
+.main
+	movd rsp,rsb
 
-pushb 106
+	pushb 106
 
-// open file
+	// open file
 
-movd rsp,rek
-movd 2000,rjo
-movd 51,r9
-int 2 // open syscall
+	movd rsp,rek
+	movd 2000,rjo
+	movd 51,r9
+	int 2 // open syscall
 
-// write to stdout
-movd 2001,rek
-movd STDOUT,rjo
-movd 51,r9
-int 1 // write 
+	// write to stdout
+	movd 2001,rek
+	movd STDOUT,rjo
+	movd 51,r9
+	int 1 // write 
 
-// write newline
-pushb 10
-movd rsp,rek
-movd STDOUT,rjo
-movd 1,r9
-int 1
+	// write newline
+	pushb 10
+	movd rsp,rek
+	movd STDOUT,rjo
+	movd 1,r9
+	int 1
