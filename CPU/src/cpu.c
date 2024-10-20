@@ -15,6 +15,7 @@ void(*Instructions[INSTRUCTION_COUNT])(void) = {
     _or,
     _xor,
     _not,
+    _mod,
     _cmpd,
     _cmpb,
     _jeq,

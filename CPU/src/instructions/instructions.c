@@ -37,9 +37,6 @@ void _movb() { // move byte
     else if(regs[RFG1] == FLAG_ISADDR_LITERAL){
         regs[regs[RA2]] = ram[running_prgm->base+regs[RA1]];
     }
-    else if(regs[RFG1] == FLAG_ISADDR_REG1){
-        regs[regs[RA2]] = ram[running_prgm->base + regs[RA1]];
-    }
     else
         regs[regs[RA2]] = regs[regs[RA1]]&0xff;
 }
@@ -117,6 +114,11 @@ void _not() {
 
     int num1 = get_num1(false);
     regs[regs[RA1]] = ~num1;
+}
+
+void _mod(){
+    int num1 = get_num1(false);
+    regs[regs[RA1]] %= num1;
 }
 
 void _cmpb() {

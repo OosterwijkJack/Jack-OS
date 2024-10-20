@@ -53,7 +53,7 @@ void *execution_loop(){ // forever loop deals with executing active programs and
         }
 
         if(opcode == 0){
-            //display_registers();
+            display_registers();
             deallocate_program(running_prgm->pid, &prgm_list, &free_list, ram);
             running_prgm = NULL;
 

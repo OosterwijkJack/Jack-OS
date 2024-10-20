@@ -11,7 +11,7 @@ ARG2_BITS = 5
 ARG1_BITS = 19
 ARG1_SIZE = (2**ARG1_BITS)-1
 
-DATA_BASE = 0 # idk
+DATA_BASE = 1025
 
 func_table = {
     "add": 0,
@@ -24,18 +24,20 @@ func_table = {
     "or": 7,
     "xor": 8,
     "not": 9,
-    "cmpd": 10,
-    "cmpb": 11,
-    "jeq": 12,
-    "jlt": 13,
-    "jgt": 14,
-    "jne": 15,
-    "jmp": 16,
-    "pushb": 17,
-    "pushd": 18,
-    "pop": 19,
-    "int": 20
+    "mod": 10,  
+    "cmpd": 11,
+    "cmpb": 12,
+    "jeq": 13,
+    "jlt": 14,
+    "jgt": 15,
+    "jne": 16,
+    "jmp": 17,
+    "pushb": 18,
+    "pushd": 19,
+    "pop": 20,
+    "int": 21
 }
+
 
 reg_names = {
     "r0": 1,
@@ -73,7 +75,6 @@ def main ():
 
     remove_whitespace()
     assemble_data()
-    print(label_dict)
     convert_labels() # converts labels to numbers
     assemble_no_labels() # assembles
 
@@ -300,15 +301,12 @@ def convert_labels():
 
     file = open(sys.argv[2], 'w')
     for i in lines_new:        
-        # if label dict empty just write
-        if(len(label_dict) <= 0):
-            file.write(i + "\n")
-            continue
+        # replace labels with their value
+        for labels in label_dict.keys():
+            if labels in i:
+                i = i.replace(labels, str(label_dict[labels]))
+        file.write(i + "\n")
 
-        if i in  label_dict.keys():
-            file.write(i.replace(j, str(label_dict[j])) + "\n")
-        else: 
-            file.write(i + "\n")
     file.close()
 
 

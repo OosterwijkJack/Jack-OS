@@ -75,6 +75,9 @@ int allocate_program(int size, int* pid, FILE* prgmCode, free_list_t **w_free_li
         data_size = write_memory((*w_prgm_list)->base + (*w_prgm_list)->data_base, (*w_prgm_list)->base + size-1,prgmCode); // write program data
     }
 
+    if(data_size == 0){
+        return -1;
+    }
     // assign bases now that we are aware of data size
     (*w_prgm_list)->data_size = data_size;
 
@@ -371,7 +374,7 @@ int zero_memory(int base, int bound, char * mem){
 }
 
 
-int write_code(int base, int max, FILE* mem){
+int write_memory(int base, int max, FILE* mem){
     if(mem == NULL){
         printf("Invalid file\n");
         exit(EXIT_FAILURE);

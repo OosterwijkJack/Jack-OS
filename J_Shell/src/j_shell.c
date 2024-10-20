@@ -129,7 +129,6 @@ void run_jexe(char *file_name){
     }
     conds->deallocation_done = 0;
     pthread_mutex_unlock(&locks->deallocation_lock);
-    fclose(prgm_code); // close prgm file
 }
 
 void run_ls(){

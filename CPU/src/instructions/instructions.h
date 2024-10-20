@@ -12,6 +12,7 @@ void _and();
 void _or();
 void _xor();
 void _not();
+void _mod(); // modulus operator
 void _cmpb(); // cmp byte
 void _cmpd(); // cmpl (4 bytes)
 void _jeq(); // jmp equals
