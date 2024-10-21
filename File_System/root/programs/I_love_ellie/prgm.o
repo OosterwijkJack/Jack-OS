@@ -40,3 +40,4 @@
 	movd STDOUT,rjo
 	movd 14,r9 // length of str (including endline)
 	int 1
+	int 5

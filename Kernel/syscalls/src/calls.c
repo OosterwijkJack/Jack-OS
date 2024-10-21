@@ -11,8 +11,8 @@ int (*sysapi[CALL_COUNT])(void) = {
     _open,
     _close,
     _kill,
-    _sleep,
     _exit_prgm,
+    _sleep,
     _set_window
 
 };
@@ -277,5 +277,11 @@ int _set_window(){
 }
 
 int _exit_prgm(){
+    //display_registers();
+    deallocate_program(running_prgm->pid, &prgm_list, &free_list, ram);
+    running_prgm = NULL;
 
+    if(prgm_list != NULL) // if more programs try drawing lottery
+        draw_lottery();
+    
 }

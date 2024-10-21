@@ -54,12 +54,7 @@ void *execution_loop(){ // forever loop deals with executing active programs and
 
         if(opcode == 0){
             //display_registers();
-            deallocate_program(running_prgm->pid, &prgm_list, &free_list, ram);
-            running_prgm = NULL;
-
-            if(prgm_list != NULL) // if more programs try drawing lottery
-                draw_lottery();
-            
+            _exit_prgm();  
             continue;
         }
 
