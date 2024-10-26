@@ -34,7 +34,7 @@ int get_num1(bool is_dword){
 void _movb() { // move byte
     if(regs[RFG1] == FLAG_ISLITERAL)
         regs[regs[RA2]] = (regs[RA1]&0xff);
-    else if(regs[RFG1] == FLAG_ISADDR_LITERAL){
+    else if(regs[RFG1] == FLAG_ISADDR_LITERAL || regs[RFG1] == FLAG_ISADDR_REG1){
         regs[regs[RA2]] = ram[running_prgm->base+regs[RA1]];
     }
     else

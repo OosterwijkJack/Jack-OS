@@ -1,0 +1,31 @@
+// converts ascii to int
+// r0: the intiger
+// r1: base
+// r2 strlen
+
+.data
+	zero:
+	.ascii "0"
+	str:
+	.ascii "1214"
+
+.main
+	
+	movd str,r3 // beggining of str address
+
+	jmp get_str_len
+	get_str_len_return:
+
+	sub str,r3
+
+	int 5 // sys exit
+
+
+	get_str_len:
+	// reutrn if reached end of str
+	movb [r3],r4 // mov derefrence of r3 address into r4
+	cmpb 0,r4
+	jeq get_str_len_return
+	add 1,r3
+
+	jmp get_str_len // loop

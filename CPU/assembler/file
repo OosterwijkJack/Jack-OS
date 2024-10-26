@@ -1,10 +1,13 @@
-
 .data
-    hello:
-    .ascii "hello\n"
-    bye:
-    .ascii "bye\n"
-
+str:
+.ascii "str"
 
 .main
-    movd rsp,rsb
+    jeq get_str_len
+    movd str,r0
+    cmpb [str],0
+
+    get_str_len:
+
+
+

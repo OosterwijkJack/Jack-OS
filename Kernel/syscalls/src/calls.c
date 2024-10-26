@@ -277,7 +277,7 @@ int _set_window(){
 }
 
 int _exit_prgm(){
-    //display_registers();
+    display_registers();
     deallocate_program(running_prgm->pid, &prgm_list, &free_list, ram);
     running_prgm = NULL;
 
