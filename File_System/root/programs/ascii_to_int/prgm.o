@@ -10,22 +10,44 @@
 	.ascii "1214"
 
 .main
+	movd rsp,rsb
 	
-	movd str,r3 // beggining of str address
+	movd str,r2 // beggining of str address
 
 	jmp get_str_len
 	get_str_len_return:
 
-	sub str,r3
+	sub str,r2 // strlen
+	movd 1,r1 // base
 
+	movd str,r3 // str location
+	add r2,r3 // add strlen
+	sub 1,r3
+
+	conv_ascii_loop:
+	cmpd 0,r2
+	jeq end
+
+	movb [r3],r4 // cur character
+	sub [zero],r4 // str - '0'
+	mul r1,r4 // times base
+	mul 10,r1 // increment base
+
+	add r4,r0 // add to number
+	sub 1,r2
+	sub 1,r3
+
+	jmp conv_ascii_loop
+
+	end:
 	int 5 // sys exit
 
 
 	get_str_len:
 	// reutrn if reached end of str
-	movb [r3],r4 // mov derefrence of r3 address into r4
+	movb [r2],r4 // mov derefrence of r3 address into r4
 	cmpb 0,r4
 	jeq get_str_len_return
-	add 1,r3
+	add 1,r2
 
 	jmp get_str_len // loop

@@ -15,7 +15,7 @@ int get_comp_flag(int out){
 int get_num1(bool is_dword){
     int num1 = 0;
     // if derefrence
-    if(regs[RFG1] == FLAG_ISADDR_REG1){ // pull value from memory register is pointing to
+    if(regs[RFG1] == FLAG_ISADDR_REG1 || regs[RFG1] == FLAG_ISADDR_LITERAL){ // pull value from memory register is pointing to
         if(is_dword){
             int address = running_prgm->base + regs[RA1];
             for(int i = address; i < address+4;i++){
