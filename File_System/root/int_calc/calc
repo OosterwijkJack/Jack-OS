@@ -1,0 +1,95 @@
+.data
+zero:
+.ascii "0"
+num1:
+.ascii "Enter num1: "
+num2:
+.ascii "Enter num2: "
+type:
+.ascii "Enter (+,-,*,/):"
+newline:
+.ascii "\n"
+.main
+movd num1,rek
+movd STDOUT,rjo
+movd 14,r9
+int 1
+movd STDIN,rek
+movd HEAP,rjo
+movd 10,r9
+int 0
+jmp AsciiToInt // convert input number to int and stores it in r0
+AsciiToIntReturn:
+movd r0,r1
+movd num2,rek
+movd STDOUT,rjo
+movd 14,r9
+int 1
+movd STDIN,rek
+movd HEAP,rjo
+movd 10,r9
+int 0
+jmp AsciiToInt // convert input number to int and stores it in r0
+AsciiToIntReturn:
+add r2,r1
+jmp IntToAscii
+IntToAsciiReturn:
+jmp END
+IntToAscii:
+movd r0,r1 // copy num to r1
+jmp GET_INT_LEN
+GET_INT_LEN_RET:
+sub 1,r3
+sub r3,rsp
+movb [zero],r1 // mov value of ascii zero to r0
+movd r0,r2 // for moduleo operations
+START:
+cmpd 0,r0 // jump to end if num less then zero
+jeq IntToAsciiReturn
+mod 10,r2 // get last number
+add r1,r2 // convert to ascii
+pushb r2
+add 1,rsp // increase rsp becuase order is reversed
+div 10,r0
+movd r0,r2
+jmp START
+int 5 // exit program
+GET_INT_LEN:
+cmpd 0,r1
+jeq GET_INT_LEN_RET
+add 1,r3
+div 10,r1
+jmp GET_INT_LEN
+AsciiToInt:
+movd HEAP,r2 // beggining of str address
+jmp get_str_len
+get_str_len_return:
+sub HEAP,r2 // strlen
+movd 1,r1 // base
+movd HEAP,r3 // str location
+add r2,r3 // add strlen
+sub 1,r3
+conv_ascii_loop:
+cmpd 0,r2
+jeq AsciiToIntReturn
+movb [r3],r4 // cur character
+sub [zero],r4 // str - '0'
+mul r1,r4 // times base
+mul 10,r1 // increment base
+add r4,r0 // add to number
+sub 1,r2
+sub 1,r3
+jmp conv_ascii_loop
+get_str_len:
+movb [r2],r4 // mov derefrence of r3 address into r4
+cmpb 0,r4
+jeq get_str_len_return
+add 1,r2
+jmp get_str_len // loop
+END:
+sub 1,rsp
+add 1,r3
+movd rsp,rek
+movd STDOUT,rjo
+movd r3,r9
+int 1

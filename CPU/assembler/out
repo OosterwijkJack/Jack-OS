@@ -1,3 +1,8 @@
-jeq 3
-movd 1025,r0
-cmpb [1025],0
+.data
+str:
+.ascii "str"
+.main
+jeq get_str_len
+movd str,r0
+cmpb [str],0
+get_str_len:

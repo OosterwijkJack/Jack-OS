@@ -63,9 +63,8 @@ reg_names = {
     "rjo": 20,
 }
 
-
-label_dict = { "STDIN": 1,
-    "STDOUT": 513}
+CODE_BASE = 1529
+label_dict = { "STDIN": 1, "STDOUT": 513, "HEAP": 1560}
 
 bits = []
     
@@ -77,10 +76,29 @@ def main ():
 
     remove_whitespace()
     assemble_data()
+    get_heap_base()
     convert_labels() # converts labels to numbers
     assemble_no_labels() # assembles
 
     #open(sys.argv[2], 'w').write(assembled)
+
+def get_heap_base():
+    f = open(sys.argv[2],'r')
+
+    count = 0
+    start = False
+    for i in f.readlines():
+        if (i.startswith(".main")):
+            start = True
+            continue
+
+        if(not start):
+            continue
+
+        if(i.isspace()):
+            break
+        count += 4
+    label_dict["HEAP"] = CODE_BASE + count + 5
 
 
 def assemble_data():

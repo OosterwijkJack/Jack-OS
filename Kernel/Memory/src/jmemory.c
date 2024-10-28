@@ -90,7 +90,7 @@ int allocate_program(int size, int* pid, FILE* prgmCode, free_list_t **w_free_li
     int code_size = 0;
 
     // (base, max, program code)
-    code_size = write_memory((*w_prgm_list)->base + (*w_prgm_list)->code_base, (*w_prgm_list)->base + size-1,prgmCode); // write program code
+    code_size = write_memory((*w_prgm_list)->base + (*w_prgm_list)->code_base, (*w_prgm_list)->base + size-1,prgmCode)+4; // write program code
     
     if(code_size == 0){
         // make sure there is code

@@ -47,6 +47,12 @@ void *execution_loop(){ // forever loop deals with executing active programs and
             }
         }
         PLE = regs[RPC] + running_prgm->base + running_prgm->code_base;
+
+        if(PLE > running_prgm->code_base + running_prgm->code_size + running_prgm->base){
+            printf("Overflow\n");
+            printf("%i\n",running_prgm->code_base + running_prgm->code_size);
+        }
+
         unsigned int opcode = 0; 
         for(int j = 0; j < 4; j++){
             opcode |= (ram[PLE + j] << ((j * 8)));
