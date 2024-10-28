@@ -1,5 +1,6 @@
 #include "instructions.h"
 
+int PC_before_call = 0;
 
 int get_comp_flag(int out){
 
@@ -157,32 +158,66 @@ void _cmpd() {
 }
 
 void _jeq() {
-
-    if(regs[RCF] == FLAG_ZRO)
-        regs[RPC] = (regs[RA1])*sizeof(int);
+    if(regs[RCF] == FLAG_ZRO){
+        if(regs[RA1] == SPECIAL_RET_NUM){
+            regs[RPC] = PC_before_call;
+        }
+        else{
+            regs[RPC] = (regs[RA1])*sizeof(int);
+        }
+    }
+        
 
 }
 
 void _jlt() {
 
-    if(regs[RCF] == FLAG_NEG) // num2 - num1 will be negative if num2 is less than 
-        regs[RPC] = (regs[RA1]) * sizeof(int);
+    if(regs[RCF] == FLAG_NEG){
+        if(regs[RA1] == SPECIAL_RET_NUM){
+            regs[RPC] = PC_before_call;
+        }
+        else{
+            regs[RPC] = (regs[RA1])*sizeof(int);
+        }
+    } 
+        
     
 }
 
 void _jgt() {
 
-    if(regs[RCF] == FLAG_POS)
-        regs[RPC] = (regs[RA1])*sizeof(int);
+    if(regs[RCF] == FLAG_POS){
+        if(regs[RA1] == SPECIAL_RET_NUM){
+            regs[RPC] = PC_before_call;
+        }
+        else{
+            regs[RPC] = (regs[RA1])*sizeof(int);
+        }
+    }
+        
 }
 
 void _jne() {
-
-    if(regs[RCF] != FLAG_ZRO)
-        regs[RPC] = (regs[RA1])*sizeof(int);
+    if(regs[RCF] != FLAG_ZRO){
+        if(regs[RA1] == SPECIAL_RET_NUM){
+            regs[RPC] = PC_before_call;
+        }
+        else{
+            regs[RPC] = (regs[RA1])*sizeof(int);
+        }
+    }
 }
 
 void _jmp() {
+    if(regs[RA1] == SPECIAL_RET_NUM){
+        regs[RPC] = PC_before_call;
+        }
+    else{
+        regs[RPC] = (regs[RA1])*sizeof(int);
+    }
+}
+void _call(){
+    PC_before_call = regs[RPC];
     regs[RPC] = (regs[RA1])*sizeof(int);
 }
 

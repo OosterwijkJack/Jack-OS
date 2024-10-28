@@ -26,7 +26,8 @@ void(*Instructions[INSTRUCTION_COUNT])(void) = {
     _pushb,
     _pushd,
     _pop,
-    _int
+    _int,
+    _call
 };
 
 void display_registers(){

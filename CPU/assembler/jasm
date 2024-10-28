@@ -5,7 +5,6 @@
 # be able to run in my operating system’s environment 
 
 import sys
-import re
 
 INSTRUCTION_BITS = 5
 ARG2_BITS = 5
@@ -36,7 +35,8 @@ func_table = {
     "pushb": 18,
     "pushd": 19,
     "pop": 20,
-    "int": 21
+    "int": 21,
+    "call": 22
 }
 
 
@@ -64,7 +64,7 @@ reg_names = {
 }
 
 CODE_BASE = 1529
-label_dict = { "STDIN": 1, "STDOUT": 513, "HEAP": 1560}
+label_dict = { "STDIN": 1, "STDOUT": 513, "ret" : 50000}
 
 bits = []
     
@@ -77,6 +77,7 @@ def main ():
     remove_whitespace()
     assemble_data()
     get_heap_base()
+    print(label_dict)
     convert_labels() # converts labels to numbers
     assemble_no_labels() # assembles
 
@@ -98,7 +99,7 @@ def get_heap_base():
         if(i.isspace()):
             break
         count += 4
-    label_dict["HEAP"] = CODE_BASE + count + 5
+    label_dict["HEAP"] = CODE_BASE + count + 5 + 1000
 
 
 def assemble_data():

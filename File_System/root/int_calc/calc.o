@@ -21,9 +21,8 @@
 	movd 10,r9
 	int 0
 
-	jmp AsciiToInt // convert input number to int and stores it in r0
-	AsciiToIntReturn:
-	movd r0,r1
+	call AsciiToInt // convert input number to int and stores it in r0
+	movd r0,r5
 
 	movd num2,rek
 	movd STDOUT,rjo
@@ -35,16 +34,15 @@
 	movd 10,r9
 	int 0
 
-	jmp AsciiToInt // convert input number to int and stores it in r0
-	AsciiToIntReturn:
+	call AsciiToInt // convert input number to int and stores it in r0
 
 	// calculator code :
 	// r1 ->num1
 	// r0 ->num2
-	add r2,r1
 
-	jmp IntToAscii
-	IntToAsciiReturn:
+	add r5,r0
+
+	call IntToAscii
 
 	jmp END
 
@@ -63,7 +61,7 @@
 
 	START:
 	cmpd 0,r0 // jump to end if num less then zero
-	jeq IntToAsciiReturn
+	jeq ret
 
 	mod 10,r2 // get last number
 	add r1,r2 // convert to ascii
@@ -90,6 +88,11 @@
 
 
 	AsciiToInt:
+	movd 0,r0
+	movd 0,r1
+	movd 0,r2
+	movd 0,r3
+	movd 0,r4
 	movd HEAP,r2 // beggining of str address
 
 	jmp get_str_len
@@ -104,7 +107,7 @@
 
 	conv_ascii_loop:
 	cmpd 0,r2
-	jeq AsciiToIntReturn
+	jeq ret
 
 	movb [r3],r4 // cur character
 	sub [zero],r4 // str - '0'
@@ -119,7 +122,7 @@
 
 	get_str_len:
 	// reutrn if reached end of str
-	movb [r2],r4 // mov derefrence of r3 address into r4
+	movb [r2],r4 // mov derefrence of r2 address into r4
 	cmpb 0,r4
 	jeq get_str_len_return
 	add 1,r2

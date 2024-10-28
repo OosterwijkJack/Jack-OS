@@ -3,6 +3,8 @@
 #include "cpu.h"
 #include "calls.h"
 
+#define SPECIAL_RET_NUM 50000
+
 // -----instructions-----
 void _add();
 void _mul();
@@ -26,5 +28,6 @@ void _pushb();
 void _pushd();
 void _pop();
 void _int();
+void _call();
 // -----------------
 
