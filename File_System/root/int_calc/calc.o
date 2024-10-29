@@ -1,3 +1,9 @@
+// Max input size is 10
+
+// r0 -> num 1
+// r1 -> num 2
+// r6 -> sign location
+
 .data
 	zero:
 	.ascii "0"
@@ -6,11 +12,21 @@
 	num2:
 	.ascii "Enter num2: "
 	type:
-	.ascii "Enter (+,-,*,/):"
+	.ascii "Enter (+,-,*,/): "
 	newline:
 	.ascii "\n"
+	addition:
+	.ascii "+"
+	subtract:
+	.ascii "-"
+	divide:
+	.ascii "/"
+	multiply:
+	.ascii "*"
+
 
 .main
+	// ask for num1
 	movd num1,rek
 	movd STDOUT,rjo
 	movd 14,r9
@@ -24,6 +40,22 @@
 	call AsciiToInt // convert input number to int and stores it in r0
 	movd r0,r5
 
+	// ask for type of operation
+	movd type,rek
+	movd STDOUT,rjo
+	movd 18,r9
+	int 1
+
+	// store type after input int would be stored
+	movd HEAP,r6
+	add 11,r6
+
+	movd STDIN,rek
+	movd r6,rjo
+	movd 3,r9
+	int 0
+
+	// ask for num2
 	movd num2,rek
 	movd STDOUT,rjo
 	movd 14,r9
@@ -37,13 +69,44 @@
 	call AsciiToInt // convert input number to int and stores it in r0
 
 	// calculator code :
-	// r1 ->num1
-	// r0 ->num2
+	// r0 ->num1
+	// r1 ->num2
 
-	add r5,r0
+	movd r0,r1
+	movd r5,r0
 
+	cmpb [addition],[r6]
+	jeq if_add
+
+	cmpb [subtract],[r6]
+	jeq if_sub
+
+	cmpb [multiply],[r6]
+	jeq if_mult
+
+	cmpb [divide],[r6]
+	jeq if_divide
+
+	jmp print_screen
+
+	if_add:
+	add r1,r0
+	jmp print_screen
+
+	if_sub:
+	sub r1,r0
+	jmp print_screen
+
+	if_mult:
+	mul r1,r0
+	jmp print_screen
+
+	if_divide:
+	div r1,r0
+	jmp print_screen
+
+	print_screen:
 	call IntToAscii
-
 	jmp END
 
 	IntToAscii:

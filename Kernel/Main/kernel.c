@@ -51,6 +51,8 @@ void *execution_loop(){ // forever loop deals with executing active programs and
         if(PLE > running_prgm->code_base + running_prgm->code_size + running_prgm->base){
             printf("Overflow\n");
             printf("%i\n",running_prgm->code_base + running_prgm->code_size);
+            printf("%i\n", regs[RPC]);
+            printf("%i\n", running_prgm->heap_base);
         }
 
         unsigned int opcode = 0; 
@@ -59,7 +61,7 @@ void *execution_loop(){ // forever loop deals with executing active programs and
         }
 
         if(opcode == 0){
-            //display_registers();
+            display_registers();
             _exit_prgm();  
             continue;
         }

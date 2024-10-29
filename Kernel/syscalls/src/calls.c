@@ -94,10 +94,6 @@ int _read(){ // FIXME
             ram[physical_write_addr - bytes_read] = 0;
 
     }
-    
-    else{
-        // handle file later may implement file descriptors 
-    }
 
     return bytes_read; 
 }
