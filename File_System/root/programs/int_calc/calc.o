@@ -193,7 +193,16 @@
 	// write number to screen
 	sub 1,rsp
 	add 1,r3
+
+	// write result to screen
 	movd rsp,rek
 	movd STDOUT,rjo
 	movd r3,r9
 	int 1
+
+	// newline char to screen
+	movd newline,rek
+	movd STDOUT,rjo
+	movd 2,r9
+	int 1
+

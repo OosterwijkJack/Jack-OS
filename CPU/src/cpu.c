@@ -83,6 +83,8 @@ void execute_instruction(unsigned int opCode){
 
         if(arg2_identifier)
             regs[RFG2] = FLAG_ISADDR_REG2;
+        else    
+            regs[RFG2] = FLAG_ISREG;
        
     }
     
