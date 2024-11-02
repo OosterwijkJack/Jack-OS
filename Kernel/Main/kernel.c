@@ -61,7 +61,6 @@ void *execution_loop(){ // forever loop deals with executing active programs and
         }
 
         if(opcode == 0){
-            display_registers();
             _exit_prgm();  
             continue;
         }

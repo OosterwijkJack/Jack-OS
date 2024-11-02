@@ -72,7 +72,7 @@ int allocate_program(int size, int* pid, FILE* prgmCode, free_list_t **w_free_li
     // write program data 
     int data_size = 0;
     if(prgmCode != NULL){
-        data_size = write_memory((*w_prgm_list)->base + (*w_prgm_list)->data_base, (*w_prgm_list)->base + size-1,prgmCode); // write program data
+        data_size = write_memory((*w_prgm_list)->base + (*w_prgm_list)->data_base, (*w_prgm_list)->base + size-1,prgmCode, false); // write program data
     }
 
     if(data_size == 0){
@@ -90,7 +90,7 @@ int allocate_program(int size, int* pid, FILE* prgmCode, free_list_t **w_free_li
     int code_size = 0;
 
     // (base, max, program code)
-    code_size = write_memory((*w_prgm_list)->base + (*w_prgm_list)->code_base, (*w_prgm_list)->base + size-1,prgmCode)+4; // write program code
+    code_size = write_memory((*w_prgm_list)->base + (*w_prgm_list)->code_base, (*w_prgm_list)->base + size-1,prgmCode, true)+4; // write program code
     
     if(code_size == 0){
         // make sure there is code
@@ -374,7 +374,7 @@ int zero_memory(int base, int bound, char * mem){
 }
 
 
-int write_memory(int base, int max, FILE* mem){
+int write_memory(int base, int max, FILE* mem, bool data_loaded){
     if(mem == NULL){
         printf("Invalid file\n");
         exit(EXIT_FAILURE);
@@ -409,7 +409,7 @@ int write_memory(int base, int max, FILE* mem){
         else
             zero_count = 0;
 
-        if(zero_count >= 4){ // data section terminates with 32 bits of 0
+        if(zero_count >= 4 && !data_loaded){ // data section terminates with 32 bits of 0
             break;
         }
 

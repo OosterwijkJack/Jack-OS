@@ -29,7 +29,7 @@ int program_list_delete(prgm* node, prgm **w_prgm_list);
 
 int zero_memory(int base, int bound, char *mem);
 int binarys_to_int(char * s, size_t size);
-int write_memory(int base, int max, FILE* mem);
+int write_memory(int base, int max, FILE* mem, bool data_loaded);
 
 prgm * get_program(int pid, prgm * w_prgm_list);
 void print_memory();

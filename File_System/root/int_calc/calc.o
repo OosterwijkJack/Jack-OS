@@ -111,11 +111,10 @@
 
 	IntToAscii:
 	// call get int len stores output in r3
-
+	movd 0,r3
 	movd r0,r1 // copy num to r1
 	jmp GET_INT_LEN
 	GET_INT_LEN_RET:
-	sub 1,r3
 
 	sub r3,rsp
 
@@ -137,8 +136,6 @@
 	movd r0,r2
 
 	jmp START
-
-	int 5 // exit program
 
 	GET_INT_LEN:
 	cmpd 0,r1

@@ -3,11 +3,6 @@ str:
 .ascii "str"
 
 .main
-    jeq get_str_len
-    movd str,r0
-    cmpb [str],0
-
-    get_str_len:
-
+    add r1,r0
 
 
